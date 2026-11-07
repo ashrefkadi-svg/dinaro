@@ -32,9 +32,34 @@ AI assistant features are intentionally out of the initial scope.
 - Add automated tests for financial calculations, authorization, and critical user flows.
 - Document migrations and preserve backward compatibility where practical.
 
-## Repository status
+## Current frontend prototype
 
-This repository is the clean starting point for the DINARO+ implementation. Architecture and dependencies will be introduced in small, reviewable steps.
+The first responsive React + Vite interface is available in `src/`.
+
+- Arabic-first RTL dashboard with an emerald dark theme.
+- Overview cards, cash-flow chart, monthly budget, recent transactions, and a savings goal.
+- Prototype navigation for transactions, accounts, budgets, and goals.
+- Add-transaction interaction using in-memory demonstration data.
+- Responsive sidebar and reduced-motion support.
+
+**Important:** displayed balances and chart values are demonstration data. The current interface does not persist transactions or connect to the financial API yet.
+
+## Run locally
+
+Requirements: Node.js 20 or newer.
+
+```bash
+npm install
+npm run dev
+```
+
+Create a production build with:
+
+```bash
+npm run build
+```
+
+See [docs/DESIGN-SYSTEM.md](docs/DESIGN-SYSTEM.md) for visual tokens and the role of each UI library.
 
 ## Security
 
