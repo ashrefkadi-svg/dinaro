@@ -5,3 +5,134 @@
 @media(max-width:900px){.sidebar{transform:translateX(100%);transition:transform .25s ease;width:270px}.sidebar.sidebar-open{transform:translateX(0)}.main-area{width:100%;margin-right:0}.menu-toggle,.mobile-close{display:grid}.mobile-scrim{display:block;position:fixed;inset:0;background:#0009;border:0;z-index:15}.topbar{padding:0 22px}.page-content{padding:25px 22px}.overview-grid{grid-template-columns:1fr 1fr}.balance-card{grid-column:span 2}.content-grid{grid-template-columns:1fr}.chart-panel{min-height:290px}.budget-panel{min-height:270px}}
 @media(max-width:600px){.topbar{height:61px;padding:0 14px}.topbar-start,.topbar-actions{gap:9px}.search-box{width:36px;padding:0;justify-content:center;border:0;background:transparent}.search-box input{display:none}.notification-btn{width:34px;height:34px}.page-content{padding:21px 14px}.welcome-row{display:block}.welcome-row h1{font-size:22px}.welcome-row p{font-size:10px;line-height:1.8;max-width:340px}.welcome-actions{margin-top:15px}.welcome-actions>*{flex:1}.overview-grid{gap:9px}.balance-card{grid-column:span 2;min-height:185px;padding:16px}.balance-value{font-size:30px}.stat-card{min-height:158px;padding:13px 11px}.stat-heading{font-size:9px;gap:6px}.stat-icon{width:28px;height:28px}.stat-card strong{font-size:18px;margin-top:16px}.stat-foot{font-size:8px;flex-wrap:wrap}.content-grid,.bottom-grid{grid-template-columns:1fr;gap:10px}.panel{padding:15px}.chart-panel{min-height:275px}.chart-wrap{height:175px}.budget-panel{min-height:260px}.transactions-panel{padding:14px 12px}.transaction-row{gap:8px}.transaction-icon{width:31px;height:31px}.transaction-info b{font-size:9px}.transaction-info small{font-size:8px}.amount{font-size:10px}.status-pill{font-size:7px;padding:4px 6px}.goal-card{min-height:180px}.insight-card{min-height:140px}.footer{flex-wrap:wrap;gap:10px;font-size:8px}.breadcrumb{font-size:10px}.top-avatar{width:30px;height:30px}.mobile-close{margin-right:auto}.brand{padding-bottom:22px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+
+/* DINARO+ Midnight Design System — advanced motion layer */
+:root{
+  color-scheme:dark;
+  --bg:#070b14;
+  --surface:#0d1421;
+  --surface-raised:#111c2b;
+  --surface-glass:rgba(15,25,39,.76);
+  --line:rgba(151,178,196,.13);
+  --line-strong:rgba(91,222,184,.28);
+  --muted:#8b9bad;
+  --text:#edf5fb;
+  --emerald:#36ddb0;
+  --emerald-deep:#0b8f70;
+  --midnight-blue:#101d31;
+  --shadow-soft:0 18px 55px rgba(0,0,0,.24);
+  --shadow-glow:0 0 42px rgba(37,211,163,.10);
+  --radius-card:18px;
+  --ease-out:cubic-bezier(.22,1,.36,1);
+}
+body{
+  color:var(--text);
+  background:
+    radial-gradient(ellipse at 82% 0%,rgba(23,76,91,.22),transparent 34%),
+    radial-gradient(ellipse at 8% 78%,rgba(19,73,76,.12),transparent 38%),
+    #070b14;
+}
+.app-shell{
+  background:
+    radial-gradient(ellipse at 78% -20%,rgba(20,105,105,.17),transparent 42%),
+    linear-gradient(145deg,#070b14 0%,#0a1220 55%,#080e18 100%);
+}
+.sidebar{
+  background:rgba(9,15,26,.92);
+  border-left-color:rgba(151,178,196,.12);
+  box-shadow:12px 0 50px rgba(0,0,0,.12);
+  backdrop-filter:blur(22px);
+}
+.brand-mark{
+  background:linear-gradient(145deg,#7af5d0 0%,#20c997 46%,#08775f 100%);
+  box-shadow:0 0 0 5px rgba(43,220,171,.07),0 12px 32px rgba(18,196,145,.25);
+}
+.workspace,.search-box,.icon-btn,.secondary-btn,.select-chip{
+  background:rgba(18,29,45,.78);
+  border-color:var(--line);
+}
+.nav-item{transition:background .24s var(--ease-out),color .24s var(--ease-out),transform .24s var(--ease-out)}
+.nav-item:hover{transform:translateX(-3px);background:rgba(42,73,87,.28)}
+.nav-item.active{
+  background:linear-gradient(100deg,rgba(22,115,91,.25),rgba(24,57,76,.62));
+  color:#69e9c1;
+  box-shadow:inset -2px 0 #42e0b5,0 8px 28px rgba(13,168,126,.08);
+}
+.main-area{background:transparent}
+.topbar{
+  background:rgba(7,13,23,.72);
+  border-bottom-color:var(--line);
+  backdrop-filter:blur(24px) saturate(150%);
+}
+.page-content{animation:page-enter .7s var(--ease-out) both}
+.welcome-row h1{letter-spacing:-.8px}
+.eyebrow{color:#70e4c0}
+.live-dot{box-shadow:0 0 0 4px rgba(41,214,157,.12),0 0 16px rgba(41,214,157,.65)}
+.primary-btn{
+  background:linear-gradient(120deg,#63f0c7 0%,#25c997 48%,#0e9e79 100%);
+  border-color:rgba(120,255,218,.5);
+  box-shadow:0 8px 26px rgba(18,185,132,.2),inset 0 1px rgba(255,255,255,.24);
+  transition:transform .25s var(--ease-out),box-shadow .25s ease,filter .25s ease;
+}
+.primary-btn:hover{transform:translateY(-2px);box-shadow:0 13px 34px rgba(18,185,132,.28);filter:saturate(1.12)}
+.primary-btn:active,.icon-btn:active{transform:scale(.97)}
+.balance-card{
+  border-color:rgba(97,239,195,.35);
+  border-radius:var(--radius-card);
+  background:
+    radial-gradient(circle at 12% 4%,rgba(94,255,215,.22),transparent 36%),
+    linear-gradient(125deg,#123c43 0%,#105044 45%,#102a3b 100%);
+  box-shadow:0 20px 55px rgba(0,0,0,.24),0 0 42px rgba(26,204,156,.09),inset 0 1px rgba(255,255,255,.08);
+}
+.balance-glow{background:rgba(75,241,194,.2);filter:blur(42px);animation:glow-drift 8s ease-in-out infinite alternate}
+.balance-value{font-size:clamp(29px,3vw,38px);text-shadow:0 3px 24px rgba(127,255,219,.12)}
+.stat-card,.panel,.insight-card{
+  border-color:var(--line);
+  border-radius:var(--radius-card);
+  background:linear-gradient(145deg,rgba(17,29,46,.94),rgba(11,20,33,.94));
+  box-shadow:var(--shadow-soft),inset 0 1px rgba(255,255,255,.025);
+  transition:border-color .28s ease,box-shadow .28s ease,background .28s ease,transform .28s var(--ease-out);
+}
+.stat-card:hover,.panel:hover,.insight-card:hover{
+  border-color:rgba(84,221,184,.25);
+  box-shadow:var(--shadow-soft),var(--shadow-glow);
+}
+.stat-icon{box-shadow:inset 0 1px rgba(255,255,255,.07)}
+.chart-panel,.budget-panel,.transactions-panel,.goal-card{backdrop-filter:blur(16px)}
+.chart-wrap{filter:drop-shadow(0 5px 12px rgba(34,201,151,.07))}
+.budget-track,.goal-track{background:rgba(132,157,174,.14);height:8px}
+.budget-track i,.goal-track i{box-shadow:0 0 14px rgba(45,220,166,.3);position:relative;overflow:hidden}
+.budget-track i:after,.goal-track i:after{
+  content:"";position:absolute;inset:0;transform:translateX(-100%);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.36),transparent);
+  animation:progress-shimmer 3.2s ease-in-out infinite;
+}
+.transaction-row{transition:background .22s ease,padding .22s ease}
+.transaction-row:hover{background:rgba(63,103,119,.09);padding-inline:8px;border-radius:10px}
+.transaction-icon{box-shadow:inset 0 1px rgba(255,255,255,.08)}
+.goal-symbol,.insight-icon{box-shadow:0 8px 24px rgba(34,201,151,.12),inset 0 1px rgba(255,255,255,.1)}
+.add-modal{
+  background:linear-gradient(145deg,#142237,#0c1727);
+  border-color:rgba(91,222,184,.24);
+  box-shadow:0 35px 110px rgba(0,0,0,.62),0 0 50px rgba(27,183,142,.08);
+  backdrop-filter:blur(22px);
+}
+.add-modal>input{background:rgba(6,13,23,.65);border-color:var(--line)}
+.add-modal>input:focus{border-color:var(--emerald);box-shadow:0 0 0 3px rgba(54,221,176,.1)}
+.toast{background:rgba(13,49,43,.94);border-color:rgba(74,222,174,.38);backdrop-filter:blur(18px)}
+.icon-btn{transition:transform .2s var(--ease-out),border-color .2s ease,background .2s ease}
+.icon-btn:hover{border-color:rgba(91,222,184,.38);background:rgba(31,63,69,.7);color:#d9fff2}
+:focus-visible{outline:2px solid #5ce8c0;outline-offset:3px}
+@keyframes page-enter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes glow-drift{from{transform:translate3d(0,0,0) scale(.94)}to{transform:translate3d(38px,20px,0) scale(1.12)}}
+@keyframes progress-shimmer{0%,35%{transform:translateX(-100%)}75%,100%{transform:translateX(110%)}}
+@media(max-width:900px){.sidebar{background:rgba(8,15,26,.97);backdrop-filter:blur(24px)}}
+@media(max-width:600px){
+  .balance-card,.stat-card,.panel,.insight-card{border-radius:15px}
+  .balance-value{font-size:29px}
+}
+@media(prefers-reduced-motion:reduce){
+  .page-content,.balance-glow,.budget-track i:after,.goal-track i:after{animation:none!important}
+  *,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important}
+}
