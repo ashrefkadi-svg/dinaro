@@ -605,3 +605,11 @@ button,a,input,select,[tabindex]:not([tabindex="-1"]){-webkit-tap-highlight-colo
 .signature-profile-stats b{font:700 18px "DM Sans",sans-serif;color:#8ce9cb}
 .signature-profile-stats small{margin-top:3px;color:#a7bdc9;font-size:9px}
 .signature-profile-achievements{margin-top:0}
+
+
+.signature-celebration{display:flex;align-items:center;gap:11px;padding:12px 15px;border:1px solid rgba(69,224,180,.35);border-radius:13px;background:linear-gradient(110deg,rgba(28,105,81,.3),rgba(25,43,69,.65));color:#91f0d3;box-shadow:0 12px 35px rgba(0,0,0,.18)}
+.signature-celebration>span{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:rgba(69,224,180,.13)}
+.signature-celebration>div{flex:1;min-width:0}
+.signature-celebration b,.signature-celebration small{display:block}
+.signature-celebration b{font-size:11px}
+.signature-celebration small{margin-top:3px;color:#b2d6c9;font-size:9px}
