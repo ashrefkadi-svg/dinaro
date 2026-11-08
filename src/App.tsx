@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { Activity, ArrowDownLeft, ArrowLeftRight, ArrowUpLeft, Bell, ChevronDown, ChevronLeft, CreditCard, Ellipsis, Eye, EyeOff, FileText, Home, LayoutGrid, Menu, Plus, Search, Settings, ShieldCheck, Sparkles, Target, TrendingDown, TrendingUp, Wallet, X, Globe2, Pencil, Trash2, Languages } from "lucide-react";
+import { Activity, ArrowDownLeft, ArrowLeftRight, ArrowUpLeft, Bell, ChevronDown, ChevronLeft, CreditCard, Ellipsis, Eye, EyeOff, FileText, Home, LayoutGrid, Menu, Plus, Search, Settings, ShieldCheck, Sparkles, Target, TrendingDown, TrendingUp, Wallet, X, Globe2, Pencil, Trash2 } from "lucide-react";
 
 type Lang="ar"|"en"|"fr";
 type Page="home"|"transactions"|"accounts"|"budget"|"goals"|"settings";
