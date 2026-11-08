@@ -1,4 +1,4 @@
-import { Activity, ArrowDownLeft, ArrowUpLeft, CalendarClock, GraduationCap, Search, ShieldCheck, Sparkles, Target, Wallet } from "lucide-react";
+import { Activity, ArrowDownLeft, ArrowUpLeft, CalendarClock, GraduationCap, ShieldCheck, Sparkles, Target, Wallet } from "lucide-react";
 import { motion } from "motion/react";
 type Currency="DZD"|"EUR"|"USD"|"GBP"|"SAR"|"AED"|"CAD"|"TND";
 type Tx={id:string;title:string;category:string;date:string;amount:number;type:"income"|"expense"|"transfer";accountId:string;toAccountId?:string;currency?:Currency};
