@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { createWorker } from "tesseract.js";
 import * as pdfjsLib from "pdfjs-dist";
+pdfjsLib.GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/build/pdf.worker.min.mjs", import.meta.url).toString();
 import { AnimatePresence, motion } from "motion/react";
 import { AlertCircle, Activity, Camera, Users, Gauge, CalendarClock, Upload, ArrowDownLeft, ArrowLeftRight, ArrowUpLeft, Bell, CalendarDays, CheckCircle2, ChevronDown, ChevronLeft, CreditCard, Ellipsis, Eye, EyeOff, Home, LayoutGrid, Languages, Menu, Plus, Receipt, Repeat, Search, Settings, ShieldCheck, Sparkles, Target, TrendingDown, TrendingUp, Wallet, X, Globe2, Pencil, Trash2 } from "lucide-react";
 
