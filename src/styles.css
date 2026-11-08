@@ -390,3 +390,33 @@ body{
 
 /* Beginner-friendly quick transaction flow */
 .add-modal:has(.quick-transaction-form){width:min(100%,460px)}.quick-transaction-form{display:grid;gap:2px}.transaction-type-switch{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.transaction-type-switch button{display:flex;align-items:center;justify-content:center;gap:5px;height:43px;font-size:11px}.transaction-type-switch button svg{flex:none}.quick-transaction-form>label{margin-top:14px}.quick-transaction-form .quick-amount-input{margin-top:0}.transaction-description-input::placeholder{color:#61776b}.transaction-extra-details{margin-top:13px;border:1px solid #294235;border-radius:10px;background:rgba(8,22,15,.5);padding:0 12px 12px}.transaction-extra-details summary{padding:12px 0;cursor:pointer;color:#80cdb0;font-size:11px;list-style-position:inside}.transaction-extra-details[open] summary{border-bottom:1px solid #294235;margin-bottom:5px}.transaction-extra-details label{margin-top:12px}.transaction-extra-details>input{width:100%;height:42px;border:1px solid #2b4435;background:#0b1711;border-radius:9px;padding:0 12px;color:#edf5f0;outline:none;font-size:11px}.transaction-extra-details>input:focus{border-color:#24c997}.transaction-extra-details .category-hint{display:block;margin-top:6px;color:#7f9b8a;font-size:9px}@media(max-width:600px){.transaction-type-switch button{height:45px;font-size:10px}.transaction-type-switch button svg{width:13px;height:13px}.transaction-extra-details>input{height:44px;font-size:13px}}
+
+
+/* DINARO+ Effortless Experience */
+.effortless-shell{display:grid;gap:13px;margin:0 0 16px}
+.effortless-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.effortless-head>div>span{font:700 9px "DM Sans";letter-spacing:1.2px;color:#5ce0b5}
+.effortless-head h2{font-size:17px;margin:5px 0 0}
+.effortless-head>button{display:flex;align-items:center;gap:7px;border:1px solid #29463b;border-radius:9px;background:#10221d;color:#a9d8c4;padding:9px 12px;font-size:10px}
+.effortless-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.effortless-actions button{min-height:54px;display:flex;align-items:center;justify-content:center;gap:9px;border:1px solid rgba(87,220,180,.2);border-radius:12px;background:linear-gradient(135deg,#132b29,#101d2b);color:#dff8ed;transition:transform .2s,border-color .2s}
+.effortless-actions button:hover{transform:translateY(-2px);border-color:#48dcb3}
+.effortless-actions svg{width:17px;height:17px;color:#59dfb6}
+.effortless-actions b{font-size:11px}
+.effortless-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.effortless-card{min-width:0;padding:14px 16px;border:1px solid rgba(151,178,196,.13);border-radius:14px;background:linear-gradient(145deg,rgba(17,29,46,.94),rgba(10,19,31,.94))}
+.effortless-card header{display:flex;align-items:center;gap:8px;color:#5ce0b5;font-size:11px;margin-bottom:10px}
+.effortless-card p{font-size:10px;line-height:1.8;color:#9aafa5;margin:6px 0}
+.effortless-command{display:flex;gap:7px}
+.effortless-command input{min-width:0;flex:1;height:36px;border:1px solid #2b403a;border-radius:8px;background:#091522;color:#e7f4ed;padding:0 10px;font-size:10px}
+.effortless-command button,.effortless-recent button{border:1px solid #2e775c;border-radius:8px;background:#174333;color:#baf5db;padding:0 11px;font-size:10px}
+.effortless-data-hint,.effortless-card>small{display:block;color:#7e958b;font-size:9px;line-height:1.7;margin-top:8px}
+.effortless-recent{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:10px}
+.effortless-recent small{width:100%;color:#7e958b;font-size:9px}
+.effortless-recent button{padding:6px 9px}
+.effortless-progress{height:7px;border-radius:8px;background:#263a35;overflow:hidden;margin-top:12px}
+.effortless-progress i{display:block;height:100%;border-radius:8px;background:linear-gradient(90deg,#27b987,#6af0c5);box-shadow:0 0 14px #2acb9b66;transition:width .5s cubic-bezier(.22,1,.36,1)}
+.effortless-celebrate{display:inline-flex;align-items:center;gap:6px;margin-top:9px;border:1px solid #39765e;border-radius:8px;background:#183c30;color:#b9f4d9;padding:7px 10px;font-size:9px}
+.effortless-term{width:100%;display:flex;justify-content:space-between;align-items:center;border:1px solid #2a443a;border-radius:9px;background:#0c1a25;color:#e0f4e9;padding:10px;font-size:11px}
+.effortless-term span{color:#5ce0b5;font-size:16px}
+@media(max-width:650px){.effortless-grid{grid-template-columns:1fr}.effortless-head h2{font-size:15px}.effortless-actions button{min-height:49px}.effortless-card{padding:13px}}
