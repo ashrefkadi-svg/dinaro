@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Activity, BookOpen, CheckCircle2, ChevronDown, Download, FileSpreadsheet, FileText, GraduationCap, LayoutDashboard, LockKeyhole, Plus, Search, ShieldCheck, Sparkles, Wallet } from "lucide-react";
+import { Activity, BookOpen, CheckCircle2, ChevronDown, Download, FileSpreadsheet, FileText, GraduationCap, LayoutDashboard, LockKeyhole, Pencil, Plus, Search, ShieldCheck, Trash2, Sparkles, Wallet } from "lucide-react";
 import { academyCourses } from "./financial-academy";
 import "./financial-platform.css";
 type Currency="DZD"|"EUR"|"USD"|"GBP"|"SAR"|"AED"|"CAD"|"TND";
