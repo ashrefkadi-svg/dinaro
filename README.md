@@ -74,9 +74,9 @@ No license has been selected yet. Until one is added, all rights are reserved by
 The `feature/complete-financial-platform` branch adds a dedicated Financial Academy and a financial workspace:
 
 - **Financial Academy:** 12 structured curricula, 36 lesson units, learning objectives, detailed explanations, practical cases, exercises, knowledge checks, answer explanations, source lists, and local progress tracking.
-- **DINARO Insights:** explainable spending signals based on recorded transactions, budgets, and upcoming bills. Insights are descriptive and do not promise future outcomes.
-- **Cash Flow Timeline:** chronological view of unpaid bills, recurring entries, and savings-goal due dates. Each currency remains separate.
-- **Custom Dashboard workspace:** visibility and ordering controls with a local preview. These preferences are currently local to the device; the main dashboard layout is not yet fully driven by the saved widget configuration.
+- **DINARO Insights:** explainable spending signals based on recorded transactions, budgets, and upcoming bills. Key signals are also surfaced on the configurable main dashboard. Insights are descriptive and do not promise future outcomes.
+- **Cash Flow Timeline:** chronological view of unpaid bills, recurring entries, and savings-goal due dates. A concise upcoming-events summary is available on the configurable main dashboard. Each currency remains separate.
+- **Custom Dashboard:** visibility and ordering controls are shared with the main dashboard. Saved widget preferences drive the homepage layout, including balances by currency, Safe to Spend, income and expenses, upcoming bills, goals, budgets, DINARO Insights, Cash Flow Timeline, and Financial Academy shortcuts. Preferences remain local to the device.
 - **Universal Transaction Search:** searches transaction descriptions, categories, dates, and amounts.
 - **Financial Reports:** 12-month DZD summary, CSV export compatible with Excel, and browser print-to-PDF.
 - **Multi-Profile and Shared Wallets:** local prototype records only. They do not isolate financial data or provide authenticated member access.
