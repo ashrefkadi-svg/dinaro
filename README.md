@@ -83,11 +83,11 @@ The `feature/complete-financial-platform` branch adds a dedicated Financial Acad
 - **Financial Reports:** a 12-month DZD monthly summary, per-currency totals, CSV export, and browser print-to-PDF.
 - **Recurring Rules:** view, add, edit, delete, and record the next scheduled occurrence; recording a rule creates a transaction and advances its next date.
 - **Recurring Rules:** displays existing recurring entries.
-- **Offline shell:** a basic service worker caches the application shell and same-origin static assets after they have been loaded online.
+- **Offline transaction capture:** new and edited transactions are saved immediately to the browser's local data store and also written to a durable IndexedDB outbox. The app displays connection state and the number of queued operations. When connectivity returns, the page and (where supported) the service worker attempt to send queued operations.
 
 ### Important implementation boundaries
 
-This branch is still a browser-local prototype. It does **not** yet provide authenticated multi-user profiles, server-side family permissions, cross-device shared-wallet synchronization, conflict-safe offline write queues, background push notifications, native XLSX generation, or server-backed backups. Do not treat local profile names or shared-wallet member labels as access control. These require a backend, durable database, migrations, authentication, authorization, audit history, and synchronization tests.
+This branch is still a browser-local prototype. Offline transactions remain safely queued on the current browser until a backend implements `POST /api/sync/transactions`. The endpoint must accept `{ transaction, operationId }`, enforce `Idempotency-Key`, and return `{ accepted: true, operationId }` only after a durable database commit. No endpoint is present in this branch yet, so the queue is not reported as synchronized and cross-device sync is not available. Authenticated multi-user profiles, server-side family permissions, conflict resolution, background push notifications, native XLSX generation, and server-backed backups are also not yet provided. Do not treat local profile names or shared-wallet member labels as access control. These require a backend, durable database, migrations, authentication, authorization, audit history, and synchronization tests.
 
 Financial Academy lessons are educational material, not individualized investment, legal, or tax advice. Tax and regulatory content must be checked against current official Algerian publications before operational use.
 
