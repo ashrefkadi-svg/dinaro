@@ -68,3 +68,23 @@ Do not commit API keys, passwords, session tokens, private certificates, product
 ## License
 
 No license has been selected yet. Until one is added, all rights are reserved by the copyright holder.
+
+## Complete financial platform workspace
+
+The `feature/complete-financial-platform` branch adds a dedicated Financial Academy and a financial workspace:
+
+- **Financial Academy:** 12 structured curricula, 36 lesson units, learning objectives, detailed explanations, practical cases, exercises, knowledge checks, answer explanations, source lists, and local progress tracking.
+- **DINARO Insights:** explainable spending signals based on recorded transactions, budgets, and upcoming bills. Insights are descriptive and do not promise future outcomes.
+- **Cash Flow Timeline:** chronological view of unpaid bills, recurring entries, and savings-goal due dates. Each currency remains separate.
+- **Custom Dashboard workspace:** visibility and ordering controls with a local preview. These preferences are currently local to the device; the main dashboard layout is not yet fully driven by the saved widget configuration.
+- **Universal Transaction Search:** searches transaction descriptions, categories, dates, and amounts.
+- **Financial Reports:** 12-month DZD summary, CSV export compatible with Excel, and browser print-to-PDF.
+- **Multi-Profile and Shared Wallets:** local prototype records only. They do not isolate financial data or provide authenticated member access.
+- **Recurring Rules:** displays existing recurring entries.
+- **Offline shell:** a basic service worker caches the application shell and same-origin static assets after they have been loaded online.
+
+### Important implementation boundaries
+
+This branch is still a browser-local prototype. It does **not** yet provide authenticated multi-user profiles, server-side family permissions, cross-device shared-wallet synchronization, conflict-safe offline write queues, background push notifications, native XLSX generation, or server-backed backups. Do not treat local profile names or shared-wallet member labels as access control. These require a backend, durable database, migrations, authentication, authorization, audit history, and synchronization tests.
+
+Financial Academy lessons are educational material, not individualized investment, legal, or tax advice. Tax and regulatory content must be checked against current official Algerian publications before operational use.
