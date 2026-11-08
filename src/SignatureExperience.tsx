@@ -203,6 +203,19 @@ export default function SignatureExperience({
   </div>;
 }
 
+
+export function AchievementGallery({lang,accounts,transactions,goals}:{lang:Lang;accounts:Account[];transactions:Tx[];goals:Goal[]}) {
+  const t=text[lang];
+  const achievements=[
+    accounts.length>0,transactions.length>0,goals.length>0,transactions.length>=10,
+    goals.some(g=>g.target>0&&g.saved/g.target>=.5),goals.some(g=>g.target>0&&g.saved>=g.target)
+  ];
+  return <section className="signature-panel signature-profile-achievements" aria-labelledby="profile-achievements-title">
+    <div className="signature-section-head"><div><span className="signature-kicker">DINARO+ / MILESTONES</span><h3 id="profile-achievements-title">{t.achievements}</h3></div><span className="signature-panel-icon"><Trophy size={18}/></span></div>
+    <div className="signature-achievement-grid">{achievements.map((unlocked,i)=><article key={i} className={"signature-achievement "+(unlocked?"unlocked":"locked")}><span>{unlocked?<Trophy size={19}/>:<LockKeyhole size={18}/>}</span><div><b>{t.achievementsNames[i]}</b><small>{t.achievementsDesc[i]}</small><em>{unlocked?t.unlocked:t.locked}</em></div></article>)}</div>
+  </section>;
+}
+
 function EmptyState({icon,title,desc,action,onClick}:{icon:React.ReactNode;title:string;desc:string;action?:string;onClick?:()=>void}) {
   return <div className="signature-empty"><span>{icon}</span><b>{title}</b>{desc&&<p>{desc}</p>}{action&&onClick&&<button onClick={onClick}><Plus size={14}/>{action}</button>}</div>;
 }
