@@ -20,7 +20,9 @@
     "react-dom": "^19.1.1",
     "react-hook-form": "^7.62.0",
     "recharts": "^2.15.4",
-    "zod": "^4.1.5"
+    "zod": "^4.1.5",
+    "tesseract.js": "^6.0.1",
+    "pdfjs-dist": "^4.10.38"
   },
   "devDependencies": {
     "@types/react": "^19.1.10",
