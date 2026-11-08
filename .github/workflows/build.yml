@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - feature/algeria-finance-intelligence
+      - feature/complete-financial-platform
   pull_request:
     branches:
       - main
