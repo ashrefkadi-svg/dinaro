@@ -152,11 +152,6 @@ export default function SignatureExperience({
   const goalSaved = goals.reduce((sum, goal) => sum + goal.saved, 0);
   const journey = [accounts.length > 0, transactions.length > 0, goals.length > 0, transactions.length >= 10, goals.some(g => g.target > 0 && g.saved >= g.target)];
   const journeyProgress = Math.round(journey.filter(Boolean).length / journey.length * 100);
-  const achievements = [
-    accounts.length > 0, transactions.length > 0, goals.length > 0,
-    transactions.length >= 10, goals.some(g => g.target > 0 && g.saved / g.target >= .5),
-    goals.some(g => g.target > 0 && g.saved >= g.target)
-  ];
   const nextStep = accounts.length === 0 ? t.stages[0] : transactions.length === 0 ? t.stages[1] : goals.length === 0 ? t.stages[2] : transactions.length < 10 ? t.stages[3] : t.stages[4];
   const wrappedHasData = monthTransactions.length > 0;
   const motionProps = reduceMotion ? {} : { initial: { opacity: 0, y: 14 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, amount: .12 }, transition: { duration: .48, ease: "easeOut" as const } };
