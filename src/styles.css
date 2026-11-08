@@ -435,3 +435,163 @@ body{
 .effortless-celebration b{font-size:10px}
 .effortless-celebration small{margin-top:4px;color:#a7c7b8;font-size:9px;line-height:1.6}
 .effortless-celebration button{border:0;background:transparent;color:#9ab5a7;font-size:18px;line-height:1;padding:0 3px}
+
+
+/* DINARO+ Neo Finance — signature dashboard and shared interaction language */
+:root{
+  --neo-bg:#070b14;--neo-panel:rgba(14,23,38,.88);--neo-panel-raised:#142237;
+  --neo-line:rgba(157,190,210,.14);--neo-line-active:rgba(69,224,180,.38);
+  --neo-text:#eef6fb;--neo-muted:#91a4b7;--neo-accent:#45e0b4;
+  --neo-blue:#78a9f8;--neo-radius:19px;--neo-ease:cubic-bezier(.22,1,.36,1);
+}
+button,a,input,select,[tabindex]:not([tabindex="-1"]){-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:2px solid var(--neo-accent)!important;outline-offset:3px!important}
+.signature-shell{display:grid;gap:17px;margin:0 0 22px;color:var(--neo-text)}
+.signature-hero{isolation:isolate;position:relative;overflow:hidden;padding:25px 27px 18px;border:1px solid rgba(92,229,190,.24);border-radius:24px;background:radial-gradient(ellipse at 82% 4%,rgba(65,147,176,.2),transparent 36%),linear-gradient(128deg,#102d35 0%,#101d31 48%,#101a2b 100%);box-shadow:0 22px 60px rgba(0,0,0,.25),inset 0 1px rgba(255,255,255,.06)}
+.signature-orb{position:absolute;z-index:-1;border-radius:50%;pointer-events:none;filter:blur(2px)}
+.signature-orb-one{width:240px;height:240px;right:-75px;top:-140px;background:radial-gradient(circle,rgba(69,224,180,.18),transparent 70%)}
+.signature-orb-two{width:180px;height:180px;left:20%;bottom:-145px;background:radial-gradient(circle,rgba(120,169,248,.13),transparent 70%)}
+.signature-hero-top,.signature-balance-row,.signature-hero-footer{display:flex;align-items:center;justify-content:space-between;gap:18px}
+.signature-eyebrow{display:flex;align-items:center;gap:8px;color:#85e8ca;font:700 9px "DM Sans",sans-serif;letter-spacing:1.3px}
+.signature-eyebrow i{width:6px;height:6px;border-radius:50%;background:var(--neo-accent);box-shadow:0 0 13px var(--neo-accent)}
+.signature-hero h2{margin:10px 0 5px;font-size:clamp(19px,2vw,25px);letter-spacing:-.5px;font-weight:650}
+.signature-hero p{margin:0;color:#a5b8c8;font-size:10px;line-height:1.8}
+.signature-privacy{display:flex;align-items:center;gap:7px;flex:none;border:1px solid rgba(255,255,255,.14);border-radius:10px;background:rgba(255,255,255,.055);color:#c5d9e3;padding:9px 11px;font-size:9px;transition:background .2s,border-color .2s}
+.signature-privacy:hover{background:rgba(255,255,255,.1);border-color:var(--neo-line-active)}
+.signature-balance-row{align-items:flex-end;margin-top:26px}
+.signature-balance-block{min-width:0}
+.signature-balance-block>small,.signature-hero-stats small{display:block;color:#a7c1ce;font-size:10px}
+.signature-balance-block>strong{display:block;margin-top:6px;font:700 clamp(27px,4vw,39px) "DM Sans",sans-serif;letter-spacing:-1.5px;color:#f2fff9;overflow-wrap:anywhere}
+.signature-currency-switch{display:flex;flex-wrap:wrap;gap:5px;margin-top:13px}
+.signature-currency-switch button{border:1px solid rgba(255,255,255,.13);border-radius:7px;background:rgba(5,16,28,.25);color:#a9c1cf;padding:5px 8px;font:700 9px "DM Sans",sans-serif;transition:.2s}
+.signature-currency-switch button.active{border-color:rgba(69,224,180,.55);background:rgba(69,224,180,.14);color:#91f1d2}
+.signature-hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:9px;min-width:min(100%,330px)}
+.signature-hero-stats>div{display:grid;grid-template-columns:31px 1fr;gap:4px 9px;align-items:center;padding:11px 12px;border:1px solid rgba(255,255,255,.1);border-radius:12px;background:rgba(5,16,28,.26);backdrop-filter:blur(10px)}
+.signature-stat-icon{grid-row:span 2;width:30px;height:30px;display:grid;place-items:center;border-radius:9px}
+.signature-stat-icon.income{background:rgba(69,224,180,.13);color:#78e9c8}
+.signature-stat-icon.expense{background:rgba(214,164,106,.13);color:#e6b982}
+.signature-hero-stats b{font:700 12px "DM Sans",sans-serif;color:#f1faf7;overflow-wrap:anywhere}
+.signature-hero-footer{border-top:1px solid rgba(255,255,255,.12);margin-top:21px;padding-top:12px;color:#a7c0cd;font-size:9px}
+.signature-hero-footer span,.signature-hero-footer button{display:flex;align-items:center;gap:7px}
+.signature-hero-footer button{border:1px solid rgba(69,224,180,.3);border-radius:9px;background:rgba(69,224,180,.12);color:#9bf0d5;padding:8px 11px;font-size:9px}
+.signature-section,.signature-panel{min-width:0}
+.signature-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.signature-section-head h3{margin:4px 0 0;font-size:14px;font-weight:650;letter-spacing:-.2px}
+.signature-section-head p{margin:5px 0 0;color:var(--neo-muted);font-size:9px;line-height:1.7}
+.signature-kicker{color:#68dcb9;font:700 8px "DM Sans",sans-serif;letter-spacing:1.4px}
+.signature-text-link{display:flex;align-items:center;gap:5px;border:0;background:none;color:#83e5c5;font-size:9px;white-space:nowrap}
+.signature-text-link:hover{color:#c1ffeb}
+.signature-wallet-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:11px}
+.signature-wallet-card{position:relative;overflow:hidden;min-width:0;padding:16px;border:1px solid var(--neo-line);border-radius:16px;background:linear-gradient(135deg,rgba(24,44,64,.94),rgba(13,23,38,.98));transition:transform .25s var(--neo-ease),border-color .25s,box-shadow .25s}
+.signature-wallet-card:hover{transform:translateY(-3px);border-color:var(--neo-line-active);box-shadow:0 14px 35px rgba(0,0,0,.2)}
+.signature-wallet-card:after{content:"";position:absolute;width:120px;height:120px;border:1px solid rgba(255,255,255,.06);border-radius:50%;right:-45px;bottom:-75px;box-shadow:0 0 0 14px rgba(255,255,255,.018),0 0 0 29px rgba(255,255,255,.012)}
+.wallet-tone-1{background:linear-gradient(135deg,rgba(22,54,58,.96),rgba(12,27,38,.98))}
+.wallet-tone-2{background:linear-gradient(135deg,rgba(39,42,67,.96),rgba(15,24,41,.98))}
+.signature-wallet-top,.signature-wallet-footer{display:flex;align-items:center;justify-content:space-between}
+.signature-wallet-top>span{width:31px;height:31px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.1);border-radius:9px;color:#8be8ca;background:rgba(255,255,255,.055)}
+.signature-wallet-top small{color:#8fa8b9;font-size:9px}
+.signature-wallet-card>b{display:block;margin-top:16px;color:#c3d5df;font-size:10px}
+.signature-wallet-card>strong{display:block;margin-top:7px;font:700 19px "DM Sans",sans-serif;letter-spacing:-.5px;overflow-wrap:anywhere}
+.signature-wallet-footer{margin-top:17px;color:#84a1b1;font:700 9px "DM Sans",sans-serif}
+.signature-two-column{display:grid;grid-template-columns:1.1fr .9fr;gap:13px;align-items:stretch}
+.signature-panel{padding:17px;border:1px solid var(--neo-line);border-radius:var(--neo-radius);background:linear-gradient(145deg,rgba(17,29,47,.94),rgba(10,18,31,.96));box-shadow:0 12px 32px rgba(0,0,0,.12)}
+.signature-panel-icon{width:34px;height:34px;display:grid;place-items:center;border:1px solid rgba(69,224,180,.18);border-radius:10px;background:rgba(69,224,180,.07);color:#7de8c6}
+.signature-map-content{display:grid;grid-template-columns:minmax(120px,.8fr) 1.2fr;gap:16px;align-items:center;min-height:175px}
+.signature-donut-wrap{display:grid;place-items:center}
+.signature-donut{width:min(100%,155px);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;position:relative}
+.signature-donut:before{content:"";position:absolute;inset:13px;border-radius:50%;background:#111d2d;box-shadow:inset 0 2px 10px rgba(0,0,0,.25)}
+.signature-donut>div{position:relative;z-index:1;display:grid;text-align:center;gap:4px;max-width:90%;overflow:hidden}
+.signature-donut small{font-size:9px;color:#8ea5b5}
+.signature-donut b{font:700 12px "DM Sans",sans-serif;overflow-wrap:anywhere}
+.signature-category-list{display:grid;gap:11px;min-width:0}
+.signature-category-list>div{display:grid;grid-template-columns:8px minmax(45px,1fr) auto auto;gap:7px;align-items:center;font-size:9px}
+.signature-category-list i{width:7px;height:7px;border-radius:50%}
+.signature-category-list span{color:#a9bdc9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.signature-category-list b{font:600 9px "DM Sans",sans-serif;color:#e3edf1;white-space:nowrap}
+.signature-category-list small{color:#849bad;font:9px "DM Sans",sans-serif}
+.signature-wrapped{display:grid;gap:14px;min-height:175px;align-content:center}
+.signature-net{padding:12px;border-radius:12px;background:linear-gradient(120deg,rgba(69,224,180,.1),rgba(120,169,248,.06));border:1px solid rgba(69,224,180,.14)}
+.signature-net small,.signature-net span{display:block;color:#91a9b8;font-size:9px}
+.signature-net strong{display:block;margin:5px 0;font:700 24px "DM Sans",sans-serif;letter-spacing:-.6px}
+.signature-wrapped-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.signature-wrapped-stats>div{min-width:0;padding:9px;border:1px solid var(--neo-line);border-radius:9px;background:rgba(255,255,255,.02)}
+.signature-wrapped-stats small,.signature-wrapped-stats b{display:block}
+.signature-wrapped-stats small{color:#8da4b4;font-size:8px;line-height:1.5}
+.signature-wrapped-stats b{margin-top:5px;font:700 12px "DM Sans",sans-serif;overflow-wrap:anywhere}
+.signature-top-category{display:flex;align-items:center;gap:7px;color:#e5c18b;font-size:9px}
+.signature-top-category span{color:#92a8b5}
+.signature-top-category b{margin-inline-start:auto;color:#f0d7ad}
+.signature-budget-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.signature-budget-item{min-width:0;text-align:start;padding:13px;border:1px solid var(--neo-line);border-radius:12px;background:rgba(255,255,255,.025);color:var(--neo-text);transition:border-color .2s,background .2s}
+.signature-budget-item:hover{border-color:var(--neo-line-active);background:rgba(69,224,180,.035)}
+.signature-budget-item>span{display:flex;align-items:center;gap:8px}
+.signature-budget-item>span b{font-size:10px}
+.budget-dot{width:7px;height:7px;border-radius:50%;flex:none}.dot-0{background:#45e0b4}.dot-1{background:#78a9f8}.dot-2{background:#d6a46a}.dot-3{background:#a78bfa}
+.signature-budget-item>strong{display:block;margin:10px 0 9px;font:700 12px "DM Sans",sans-serif;overflow-wrap:anywhere}
+.signature-budget-item>strong small{color:#8097a8;font-size:9px;font-weight:400}
+.signature-budget-track,.signature-goal-track{height:7px;border-radius:10px;background:rgba(255,255,255,.09);overflow:hidden}
+.signature-budget-track i,.signature-goal-track i{display:block;height:100%;border-radius:10px;background:linear-gradient(90deg,#218c79,#58e5bd);transition:width .7s var(--neo-ease)}
+.signature-budget-track i.over{background:linear-gradient(90deg,#d69b61,#ff9e91)}
+.signature-budget-foot,.signature-over{display:block;margin-top:7px;text-align:end;font:700 9px "DM Sans",sans-serif;color:#78e5c2}
+.signature-over{color:#ffad9f}
+.signature-goal-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.signature-goal-card{position:relative;overflow:hidden;min-width:0;padding:15px;border:1px solid var(--neo-line);border-radius:15px;background:linear-gradient(145deg,#17283b,#101b2b);transition:transform .25s var(--neo-ease),border-color .25s}
+.signature-goal-card:hover{transform:translateY(-3px);border-color:var(--neo-line-active)}
+.goal-tier-1{border-color:rgba(190,153,115,.26)}.goal-tier-2{border-color:rgba(161,184,208,.3)}.goal-tier-3{border-color:rgba(225,188,116,.38);background:linear-gradient(145deg,#2d2a32,#152333)}.goal-tier-4{border-color:rgba(104,225,194,.5);background:linear-gradient(145deg,#153d3b,#132338);box-shadow:inset 0 0 35px rgba(69,224,180,.06)}
+.signature-goal-top{display:flex;justify-content:space-between;align-items:center}
+.signature-goal-top>span{width:31px;height:31px;display:grid;place-items:center;border-radius:9px;background:rgba(69,224,180,.1);color:#7de8c6}
+.signature-goal-top small{color:#b9c6d2;font-size:8px}
+.signature-goal-card>b{display:block;margin-top:14px;font-size:11px}
+.signature-goal-card>strong{display:block;margin-top:8px;font:700 14px "DM Sans",sans-serif}
+.signature-goal-card>strong small{font-size:9px;color:#8da3b4;font-weight:400}
+.signature-goal-track{margin-top:13px}
+.signature-goal-bottom{display:flex;justify-content:space-between;gap:8px;margin-top:7px;color:#83e8c7;font:700 9px "DM Sans",sans-serif}
+.signature-goal-bottom small{color:#8298a8;font:9px "DM Sans",sans-serif}
+.signature-goal-unlock{display:flex;align-items:center;gap:5px;margin-top:11px;color:#91f0d3;font-size:8px}
+.signature-activity-list{display:grid}
+.signature-activity-row{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:10px;align-items:center;padding:11px 0;border-top:1px solid rgba(157,190,210,.09)}
+.signature-activity-row:first-child{border-top:0}
+.signature-activity-icon{width:32px;height:32px;display:grid;place-items:center;border-radius:10px;background:rgba(120,169,248,.1);color:#90bafa}
+.signature-activity-icon.income{background:rgba(69,224,180,.1);color:#78e9c8}
+.signature-activity-icon.expense{background:rgba(214,164,106,.1);color:#e6b982}
+.signature-activity-row>div{min-width:0}
+.signature-activity-row>div b,.signature-activity-row>div small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.signature-activity-row>div b{font-size:10px;font-weight:600}
+.signature-activity-row>div small{margin-top:4px;color:#8299a9;font-size:8px}
+.signature-activity-row>strong{font:700 10px "DM Sans",sans-serif;white-space:nowrap;color:#e5b985}
+.signature-activity-row>strong.positive{color:#76e7c5}
+.signature-journey-progress{display:grid;grid-template-columns:44px 1fr;gap:10px;align-items:center;margin:17px 0}
+.signature-journey-progress>strong{font:700 20px "DM Sans",sans-serif;color:#7ce9c8}
+.signature-journey-progress>div{height:8px;border-radius:10px;background:rgba(255,255,255,.08);overflow:hidden}
+.signature-journey-progress i{display:block;height:100%;border-radius:10px;background:linear-gradient(90deg,#218d79,#65edc4);transition:width .7s var(--neo-ease)}
+.signature-stage-list{display:grid;gap:10px}
+.signature-stage-list>div{display:flex;align-items:center;gap:9px;color:#849aaa;font-size:9px}
+.signature-stage-list>div>span{width:22px;height:22px;display:grid;place-items:center;border:1px solid rgba(157,190,210,.2);border-radius:50%;font:700 9px "DM Sans",sans-serif}
+.signature-stage-list>div.complete{color:#91e8cc}
+.signature-stage-list>div.complete>span{border-color:rgba(69,224,180,.35);background:rgba(69,224,180,.1);color:#7de8c6}
+.signature-next-step{display:grid;gap:4px;margin-top:15px;padding:10px 12px;border-inline-start:2px solid #45e0b4;border-radius:0 8px 8px 0;background:rgba(69,224,180,.055)}
+.signature-next-step small{color:#8da6b5;font-size:8px}.signature-next-step b{font-size:10px;color:#dff9ef}
+.signature-achievement-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.signature-achievement{display:flex;align-items:flex-start;gap:10px;min-width:0;padding:12px;border:1px solid var(--neo-line);border-radius:12px;background:rgba(255,255,255,.02)}
+.signature-achievement>span{width:32px;height:32px;display:grid;place-items:center;flex:none;border-radius:10px}
+.signature-achievement.unlocked>span{background:rgba(69,224,180,.12);color:#83eac9}
+.signature-achievement.locked{opacity:.64}
+.signature-achievement.locked>span{background:rgba(157,190,210,.08);color:#8da1b0}
+.signature-achievement>div{min-width:0}
+.signature-achievement b,.signature-achievement small,.signature-achievement em{display:block}
+.signature-achievement b{font-size:9px}
+.signature-achievement small{margin-top:4px;color:#899eae;font-size:8px;line-height:1.6}
+.signature-achievement em{margin-top:6px;color:#80e7c6;font-size:8px;font-style:normal}
+.signature-achievement.locked em{color:#899eae}
+.signature-empty{min-height:130px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:18px 12px;color:#8ea4b4}
+.signature-empty>span{width:36px;height:36px;display:grid;place-items:center;border:1px solid rgba(69,224,180,.18);border-radius:11px;background:rgba(69,224,180,.06);color:#76e6c4}
+.signature-empty>span svg{width:18px;height:18px}
+.signature-empty>b{margin-top:9px;color:#d8e7ee;font-size:10px}
+.signature-empty p{max-width:340px;margin:5px 0 0;color:#879dac;font-size:9px;line-height:1.7}
+.signature-empty button{display:flex;align-items:center;gap:6px;margin-top:11px;border:1px solid rgba(69,224,180,.25);border-radius:8px;background:rgba(69,224,180,.08);color:#8ce9ca;padding:7px 10px;font-size:9px}
+.signature-footnote{display:flex;align-items:center;gap:7px;margin:0;color:#8097a7;font-size:8px;line-height:1.7}
+.signature-private{filter:blur(7px);user-select:none}
+@media(max-width:950px){.signature-two-column{grid-template-columns:1fr 1fr}.signature-achievement-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:680px){.signature-shell{gap:13px}.signature-hero{padding:19px 16px 14px;border-radius:18px}.signature-hero-top{align-items:flex-start}.signature-hero h2{font-size:19px;line-height:1.4}.signature-privacy{padding:8px}.signature-privacy span{display:none}.signature-balance-row{display:grid;gap:16px;margin-top:20px}.signature-hero-stats{min-width:0}.signature-hero-stats>div{padding:9px}.signature-hero-footer{gap:9px;flex-wrap:wrap}.signature-hero-footer button{margin-inline-start:auto}.signature-two-column{grid-template-columns:1fr}.signature-panel{padding:14px;border-radius:15px}.signature-map-content{grid-template-columns:120px 1fr;gap:10px}.signature-donut{width:115px}.signature-donut:before{inset:10px}.signature-donut b{font-size:10px}.signature-category-list{gap:9px}.signature-category-list>div{grid-template-columns:7px minmax(30px,1fr) auto}.signature-category-list small{display:none}.signature-budget-grid{grid-template-columns:1fr}.signature-goal-grid{grid-template-columns:1fr 1fr}.signature-achievement-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:390px){.signature-hero-stats{grid-template-columns:1fr}.signature-goal-grid,.signature-achievement-grid{grid-template-columns:1fr}.signature-map-content{grid-template-columns:1fr}.signature-donut{width:145px}.signature-category-list{width:100%}.signature-section-head h3{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.signature-wallet-card,.signature-goal-card,.signature-budget-track i,.signature-goal-track i,.signature-journey-progress i{transition:none!important;animation:none!important}}
