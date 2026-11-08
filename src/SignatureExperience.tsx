@@ -133,8 +133,6 @@ export default function SignatureExperience({
   const upcomingCount = bills.filter(b => !b.paid && b.due >= dayKey()).length + recurring.filter(r => r.type === "expense" && r.nextDate >= dayKey()).length;
   const topCategory = categoryRows[0];
   const goalSaved = goals.reduce((sum, goal) => sum + goal.saved, 0);
-  const goalTarget = goals.reduce((sum, goal) => sum + goal.target, 0);
-  const goalProgress = goalTarget > 0 ? Math.min(100, Math.round(goalSaved / goalTarget * 100)) : 0;
   const journey = [accounts.length > 0, transactions.length > 0, goals.length > 0, transactions.length >= 10, goals.some(g => g.target > 0 && g.saved >= g.target)];
   const journeyProgress = Math.round(journey.filter(Boolean).length / journey.length * 100);
   const achievements = [
