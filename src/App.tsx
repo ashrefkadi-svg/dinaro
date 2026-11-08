@@ -22,9 +22,9 @@ const pages:Page[]=["home","transactions","accounts","budget","goals","settings"
 const icons=[Home,ArrowLeftRight,Wallet,LayoutGrid,Target,Settings];
 
 export default function App(){
- const [lang,setLang]=useState<Lang>(()=>load("dinaro-language","ar"));
+ const [lang,setLang]=useState<Lang>(()=>{const saved=load<string>("dinaro-language","ar");return saved==="en"||saved==="fr"?saved:"ar"});
  const [page,setPage]=useState<Page>("home");
- const [data,setData]=useState<Store>(()=>load("dinaro-data",demo));
+ const [data,setData]=useState<Store>(()=>load<Store>("dinaro-data",demo));
  const [visible,setVisible]=useState(true),[menu,setMenu]=useState(false),[search,setSearch]=useState(""),[toast,setToast]=useState("");
  const [modal,setModal]=useState<"tx"|"account"|"budget"|"goal"|null>(null),[editId,setEditId]=useState<string|null>(null);
  const [form,setForm]=useState({title:"",category:"",amount:"",type:"expense" as "income"|"expense",accountId:"cash",kind:"cash",due:""});
