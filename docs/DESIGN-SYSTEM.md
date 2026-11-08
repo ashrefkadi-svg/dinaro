@@ -59,3 +59,29 @@
 - React + Motion for stateful transitions.
 - CSS custom properties in `src/styles.css` for shared visual tokens.
 - Recharts for financial visualization.
+
+
+## Neo Finance signature experience
+
+The main dashboard uses the Neo Finance visual direction: layered midnight surfaces, restrained glass effects, emerald/ice-blue accents, high-contrast financial values, and responsive account cards.
+
+- **Living Dashboard:** currency-aware balance overview, monthly income/expense summary, upcoming obligations count, and a privacy blur control.
+- **Financial Activity Stream:** recent transactions in a chronological, readable feed.
+- **Interactive Money Map:** category distribution for the selected currency only. No cross-currency aggregation is performed.
+- **Smart Wallet View:** account cards show balances calculated from opening balances and recorded transactions.
+- **Beautiful Empty States:** contextual actions guide first-time users to add an account, transaction, budget, or goal.
+- **Goal progression and unlock styling:** goal cards move through visual tiers at 25%, 50%, 75%, and 100% progress. Achievement states are derived from recorded account, transaction, and goal data.
+- **Monthly Wrapped:** current-month totals, transaction count, active spending categories, goal savings, and upcoming items.
+- **Interactive Budget:** category bars respond to recorded DZD expenses and indicate when a recorded limit has been reached or exceeded.
+- **Financial Journey and milestone feedback:** a non-competitive progress path based on real setup milestones.
+- **Personal finance widgets:** balance, income, expense, budget, goals, activity, and monthly recap surfaces are composed as responsive dashboard modules.
+
+## Design tokens and interaction rules
+
+- Use the `--neo-*` tokens for new signature surfaces; keep shared controls visually consistent with the existing Midnight system.
+- Interactive elements must have keyboard-visible focus, descriptive accessible labels, and clear hover/pressed states.
+- Use semantic headings and landmarks; never rely on color alone to distinguish income, expense, progress, or locked achievements.
+- Respect `prefers-reduced-motion`; motion is progressive enhancement and must not carry essential information.
+- The balance privacy control blurs dashboard values locally; it is a convenience feature, not a security boundary.
+- The dashboard is responsive across desktop, tablet, and mobile breakpoints. RTL/LTR direction continues to be driven by the app language setting.
+- Achievement and goal-tier states are calculated from local prototype data. They are not account entitlements or server-verified rewards.
