@@ -595,3 +595,13 @@ button,a,input,select,[tabindex]:not([tabindex="-1"]){-webkit-tap-highlight-colo
 @media(max-width:680px){.signature-shell{gap:13px}.signature-hero{padding:19px 16px 14px;border-radius:18px}.signature-hero-top{align-items:flex-start}.signature-hero h2{font-size:19px;line-height:1.4}.signature-privacy{padding:8px}.signature-privacy span{display:none}.signature-balance-row{display:grid;gap:16px;margin-top:20px}.signature-hero-stats{min-width:0}.signature-hero-stats>div{padding:9px}.signature-hero-footer{gap:9px;flex-wrap:wrap}.signature-hero-footer button{margin-inline-start:auto}.signature-two-column{grid-template-columns:1fr}.signature-panel{padding:14px;border-radius:15px}.signature-map-content{grid-template-columns:120px 1fr;gap:10px}.signature-donut{width:115px}.signature-donut:before{inset:10px}.signature-donut b{font-size:10px}.signature-category-list{gap:9px}.signature-category-list>div{grid-template-columns:7px minmax(30px,1fr) auto}.signature-category-list small{display:none}.signature-budget-grid{grid-template-columns:1fr}.signature-goal-grid{grid-template-columns:1fr 1fr}.signature-achievement-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:390px){.signature-hero-stats{grid-template-columns:1fr}.signature-goal-grid,.signature-achievement-grid{grid-template-columns:1fr}.signature-map-content{grid-template-columns:1fr}.signature-donut{width:145px}.signature-category-list{width:100%}.signature-section-head h3{font-size:12px}}
 @media(prefers-reduced-motion:reduce){.signature-wallet-card,.signature-goal-card,.signature-budget-track i,.signature-goal-track i,.signature-journey-progress i{transition:none!important;animation:none!important}}
+
+
+.signature-profile-trigger{border:0;cursor:pointer;font:700 10px "DM Sans",sans-serif;flex:none}
+.signature-profile-trigger:focus-visible{outline:2px solid var(--neo-accent);outline-offset:3px}
+.signature-profile-stats{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}
+.signature-profile-stats>div{min-width:100px;padding:10px 13px;border:1px solid rgba(255,255,255,.12);border-radius:11px;background:rgba(255,255,255,.045)}
+.signature-profile-stats b,.signature-profile-stats small{display:block}
+.signature-profile-stats b{font:700 18px "DM Sans",sans-serif;color:#8ce9cb}
+.signature-profile-stats small{margin-top:3px;color:#a7bdc9;font-size:9px}
+.signature-profile-achievements{margin-top:0}
