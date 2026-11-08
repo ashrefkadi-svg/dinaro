@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import {
   Activity, ArrowDownLeft, ArrowUpRight, CalendarDays, Check, ChevronRight,
@@ -112,6 +112,23 @@ export default function SignatureExperience({
     return saved && currencies.includes(saved) ? saved : "DZD";
   });
   const [privateMode, setPrivateMode] = useState(false);
+  const [celebration, setCelebration] = useState<string | null>(null);
+  useEffect(() => {
+    const completed = goals.filter(g => g.target > 0 && g.saved >= g.target).map(g => g.id);
+    const key = "dinaro-signature-completed-goals";
+    const stored = localStorage.getItem(key);
+    if (stored === null) { localStorage.setItem(key, JSON.stringify(completed)); return; }
+    let known: string[] = [];
+    try { known = JSON.parse(stored) as string[]; } catch { known = []; }
+    const fresh = goals.find(g => completed.includes(g.id) && !known.includes(g.id));
+    if (fresh) {
+      setCelebration(fresh.title);
+      localStorage.setItem(key, JSON.stringify([...new Set([...known, ...completed])]));
+      const timer = window.setTimeout(() => setCelebration(null), 4600);
+      return () => window.clearTimeout(timer);
+    }
+    localStorage.setItem(key, JSON.stringify([...new Set([...known, ...completed])]));
+  }, [goals]);
   const availableCurrencies = currencies.filter(c => accounts.some(a => (a.currency || "DZD") === c));
   const activeCurrency = availableCurrencies.includes(currency) ? currency : (availableCurrencies[0] || "DZD");
   const accountRows = accounts.filter(a => (a.currency || "DZD") === activeCurrency);
@@ -195,10 +212,6 @@ export default function SignatureExperience({
       </section>
     </div>
 
-    <section className="signature-panel" aria-labelledby="achievements-title">
-      <div className="signature-section-head"><div><span className="signature-kicker">08 / MILESTONES</span><h3 id="achievements-title">{t.achievements}</h3></div><span className="signature-panel-icon"><Trophy size={18}/></span></div>
-      <div className="signature-achievement-grid">{achievements.map((unlocked,i)=><article key={i} className={"signature-achievement "+(unlocked?"unlocked":"locked")}><span>{unlocked?<Trophy size={19}/>:<LockKeyhole size={18}/>}</span><div><b>{t.achievementsNames[i]}</b><small>{t.achievementsDesc[i]}</small><em>{unlocked?t.unlocked:t.locked}</em></div></article>)}</div>
-    </section>
     <p className="signature-footnote"><Sparkles size={13}/>{t.tip}</p>
   </div>;
 }
