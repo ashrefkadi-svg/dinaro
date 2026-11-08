@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { AlertCircle, Activity, Camera, Users, Gauge, CalendarClock, Upload, ArrowDownLeft, ArrowLeftRight, ArrowUpLeft, Bell, CalendarDays, CheckCircle2, ChevronDown, ChevronLeft, CreditCard, Ellipsis, Home, LayoutGrid, Languages, Menu, Plus, Receipt, Repeat, Search, Settings, ShieldCheck, Sparkles, Target, Wallet, X, Globe2, Pencil, Trash2, GraduationCap } from "lucide-react";
+import { AlertCircle, Activity, Camera, Users, Gauge, CalendarClock, Upload, ArrowDownLeft, ArrowLeftRight, ArrowUpLeft, Bell, CalendarDays, CheckCircle2, ChevronDown, ChevronLeft, CreditCard, Ellipsis, Home, LayoutGrid, Languages, Menu, Plus, Receipt, Repeat, Search, Settings, ShieldCheck, Sparkles, Target, TrendingUp, Wallet, X, Globe2, Pencil, Trash2, GraduationCap } from "lucide-react";
 import FinancialPlatform from "./FinancialPlatform";
 import DashboardWidgets from "./DashboardWidgets";
 
