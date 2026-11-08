@@ -43,7 +43,7 @@ export default function App(){
  const spent=(cat:string)=>{const month=new Date().toISOString().slice(0,7);return data.transactions.filter(x=>x.type==="expense"&&x.category===cat&&x.date.slice(0,7)===month).reduce((s,x)=>s+x.amount,0)};
  const navLabel=(p:Page)=>t(p);
  const open=(kind:NonNullable<typeof modal>,id?:string)=>{
-  setEditId(id||null);let f={title:"",category:"",amount:"",type:"expense" as "income"|"expense"|"transfer",accountId:data.accounts[0]?.id||"",toAccountId:data.accounts[1]?.id||"",kind:"cash",due:"",date:new Date().toISOString().slice(0,10),saved:""};
+  setEditId(id||null);let f={title:"",category:"",amount:"",type:"expense" as "income"|"expense"|"transfer",accountId:data.accounts[0]?.id||"",toAccountId:data.accounts[1]?.id||"",kind:"cash",currency:(data.accounts[0]?.currency||"DZD") as Currency,due:"",date:new Date().toISOString().slice(0,10),saved:""};
   if(id&&kind==="tx"){const x=data.transactions.find(z=>z.id===id);if(x)f={...f,title:x.title,category:x.category,amount:String(x.amount),type:x.type,accountId:x.accountId,toAccountId:x.toAccountId||"",kind:"cash",currency:(x.currency||data.accounts.find(a=>a.id===x.accountId)?.currency||"DZD") as Currency,due:"",date:x.date,saved:""}}
   if(id&&kind==="account"){const x=data.accounts.find(z=>z.id===id);if(x)f={...f,title:x.name,category:"",amount:String(x.opening),type:"expense",accountId:x.id,kind:x.kind,currency:(x.currency||"DZD") as Currency,due:""}}
   if(id&&kind==="budget"){const x=data.budgets.find(z=>z.id===id);if(x)f={...f,category:x.category,amount:String(x.limit)}}
