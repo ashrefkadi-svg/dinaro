@@ -127,3 +127,20 @@ The home dashboard now includes a compact beginner-friendly experience layer:
 - **Micro Celebrations / Financial Journey:** shows savings-goal progress and an optional lightweight celebration. No streak penalties, financial rankings, or pressure mechanics are used.
 
 These experience preferences and usage counts are stored in the current browser. They are not synced across devices. The home dashboard remains a prototype and the underlying financial data is still browser-local.
+
+
+## Neo Finance signature dashboard
+
+The home screen has been upgraded to the Neo Finance experience:
+
+- Living Dashboard with a selected-currency balance view, monthly income/expense metrics, and a local privacy blur.
+- Smart Wallet View with account cards and balances calculated from opening balances and recorded transactions.
+- Financial Activity Stream with recent transactions and direct navigation to the full ledger.
+- Interactive Money Map showing category spending for one selected currency at a time; currencies are never added together.
+- Interactive budget progress based on current-month DZD expenses.
+- Goal Studio with visual progress tiers at 25%, 50%, 75%, and 100%.
+- Monthly Wrapped with recorded monthly net, transaction count, active categories, goal savings, and upcoming obligations.
+- Financial Journey stages, achievement gallery, milestone visuals, and contextual empty states.
+- Shared Neo Finance visual tokens, responsive layouts, keyboard focus styling, RTL/LTR compatibility, and reduced-motion support.
+
+The dashboard remains a browser-local prototype. Balances and analytics are only as complete as the records entered by the user; the privacy blur is not a security boundary, and achievement states are calculated locally rather than verified by a server. Budget analytics currently use DZD budgets and DZD expenses.
