@@ -48,7 +48,7 @@ const icons=[Home,ArrowLeftRight,Wallet,LayoutGrid,Target,Activity,TrendingUp,Ac
 export default function App(){
  const [lang,setLang]=useState<Lang>(()=>{const saved=load<string>("dinaro-language","ar");return saved==="en"||saved==="fr"?saved:"ar"});
  const [page,setPage]=useState<Page>("home");
-  const [dashboardOrder,setDashboardOrder]=useState<string[]>(()=>load("dinaro-dashboard-order",["balance","income","expense","bills","goals","budgets","insight","timeline","academy"]));
+  const [dashboardOrder,setDashboardOrder]=useState<string[]>(()=>{const defaults=["balance","income","expense","bills","goals","budgets","insight","timeline","academy"];const saved=load<string[]>("dinaro-dashboard-order",defaults);return [...saved,...defaults.filter(id=>!saved.includes(id))]});
   const [dashboardHidden,setDashboardHidden]=useState<string[]>(()=>load("dinaro-dashboard-hidden",[]));
  const [data,setData]=useState<Store>(()=>load<Store>("dinaro-data",demo));
  const [visible,setVisible]=useState(true),[menu,setMenu]=useState(false),[search,setSearch]=useState(""),[toast,setToast]=useState(""),[toastKind,setToastKind]=useState<"success"|"error">("success");
