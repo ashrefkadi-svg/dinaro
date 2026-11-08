@@ -44,7 +44,7 @@ The first responsive React + Vite interface is available in `src/`.
 
 **Important:** displayed balances and chart values are demonstration data. The current interface does not persist transactions or connect to the financial API yet.
 
-## Run locally
+## Algeria finance intelligence\n\n- Algeria-focused spending categories with Arabic, French, and English labels and keyword suggestions.\n- Bill tracking presets for Sonelgaz electricity/gas, water providers, internet, mobile and landline services.\n- DINARO Scan uses Tesseract.js for browser-side OCR and PDF.js to render the first PDF page before recognition. Extracted fields remain editable and must be confirmed before a transaction is saved. The first OCR run downloads language data and requires an internet connection; the document image is processed in the browser.\n- Smart reminders use browser notifications for upcoming bills, recurring entries, and exceeded budgets. They run while the app is open; background push delivery is not included.\n- Spending Intelligence summarizes recorded DZD expenses without mixing currencies.\n\n## Run locally
 
 Requirements: Node.js 20 or newer.
 
