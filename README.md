@@ -80,6 +80,8 @@ The `feature/complete-financial-platform` branch adds a dedicated Financial Acad
 - **Universal Transaction Search:** searches transaction descriptions, categories, dates, and amounts.
 - **Financial Reports:** 12-month DZD summary, CSV export compatible with Excel, and browser print-to-PDF.
 - **Multi-Profile and Shared Wallets:** local prototype records only. They do not isolate financial data or provide authenticated member access.
+- **Financial Reports:** a 12-month DZD monthly summary, per-currency totals, CSV export, and browser print-to-PDF.
+- **Recurring Rules:** view, add, edit, delete, and record the next scheduled occurrence; recording a rule creates a transaction and advances its next date.
 - **Recurring Rules:** displays existing recurring entries.
 - **Offline shell:** a basic service worker caches the application shell and same-origin static assets after they have been loaded online.
 
