@@ -1,5 +1,6 @@
 name: DINARO+ build
 on:
+  workflow_dispatch:
   push:
     branches:
       - feature/algeria-finance-intelligence
