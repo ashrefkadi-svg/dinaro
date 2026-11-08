@@ -7,11 +7,11 @@ type Goal={id:string;title:string;target:number;saved:number;due:string};
 type Bill={id:string;title:string;category:string;amount:number;due:string;accountId:string;currency:Currency;paid:boolean};
 type Recurring={id:string;title:string;category:string;amount:number;type:"income"|"expense";accountId:string;currency:Currency;cadence:"weekly"|"monthly"|"yearly";nextDate:string};
 type Budget={id:string;category:string;limit:number};
-type Props={lang:"ar"|"en"|"fr";transactions:Tx[];accounts:Account[];goals:Goal[];budgets:Budget[];bills:Bill[];recurring:Recurring[];order:string[];hidden:string[];onNavigate:(page:string)=>void};
+type Props={lang:"ar"|"en"|"fr";transactions:Tx[];accounts:Account[];goals:Goal[];budgets:Budget[];bills:Bill[];recurring:Recurring[];safeSpend:{currency:Currency;current:number;obligations:number;budgetReserve:number;goalReserve:number;available:number}[];order:string[];hidden:string[];onNavigate:(page:string)=>void};
 const currencies:Currency[]=["DZD","EUR","USD","GBP","SAR","AED","CAD","TND"];
 const money=(n:number,c:Currency="DZD",lang:"ar"|"en"|"fr"="ar")=>new Intl.NumberFormat(lang==="ar"?"ar-DZ":lang==="fr"?"fr-DZ":"en-US",{style:"currency",currency:c,maximumFractionDigits:c==="DZD"?0:2}).format(n);
 const addDays=(date:string,days:number)=>{const d=new Date(date+"T12:00:00");d.setDate(d.getDate()+days);return d.toISOString().slice(0,10)};
-export default function DashboardWidgets({lang,transactions,accounts,goals,budgets,bills,recurring,order,hidden,onNavigate}:Props){
+export default function DashboardWidgets({lang,transactions,accounts,goals,budgets,bills,recurring,safeSpend,order,hidden,onNavigate}:Props){
  const today=new Date().toISOString().slice(0,10),month=today.slice(0,7),previous=new Date();previous.setMonth(previous.getMonth()-1);const prev=previous.toISOString().slice(0,7);
  const balance=(currency:Currency)=>accounts.filter(a=>(a.currency||"DZD")===currency).reduce((sum,a)=>sum+a.opening+transactions.reduce((v,t)=>v+(t.accountId===a.id?(t.type==="income"?t.amount:-t.amount):0)+(t.type==="transfer"&&t.toAccountId===a.id?t.amount:0),0),0);
  const totals=(type:"income"|"expense",period=month)=>transactions.filter(t=>t.type===type&&(t.currency||"DZD")==="DZD"&&t.date.slice(0,7)===period).reduce((s,t)=>s+t.amount,0);
@@ -22,6 +22,7 @@ export default function DashboardWidgets({lang,transactions,accounts,goals,budge
  budgets.filter(b=>spent(b.category)>b.limit).forEach(b=>insights.push("تجاوزت "+b.category+" حد الميزانية بمقدار "+money(spent(b.category),"DZD",lang)+"."));if(upcomingBills.length)insights.push("لديك "+upcomingBills.length+" فاتورة غير مدفوعة خلال الثلاثين يوماً القادمة.");if(!insights.length)insights.push("لا توجد إشارة استثنائية واضحة في البيانات الحالية.");
  const widgets:Record<string,{title:string;icon:typeof Wallet;node:React.ReactNode}>={
  balance:{title:"الأرصدة حسب العملة",icon:Wallet,node:<div className="dw-values">{currencies.filter(c=>accounts.some(a=>(a.currency||"DZD")===c)).map(c=><div key={c}><small>{c}</small><strong>{money(balance(c),c,lang)}</strong></div>)}</div>},
+ safeSpend:{title:"Safe to Spend",icon:ShieldCheck,node:safeSpend.length?safeSpend.map(x=><div className="dw-progress" key={x.currency}><b>{x.currency} · المتاح للإنفاق</b><strong className={x.available>=0?"positive-amount":"safe-negative"}>{money(x.available,x.currency,lang)}</strong><small>الرصيد {money(x.current,x.currency,lang)} − الالتزامات {money(x.obligations,x.currency,lang)}{x.currency==="DZD"?" − الاحتياطيات "+money(x.budgetReserve+x.goalReserve,x.currency,lang):""}</small></div>):<small className="dw-muted">أضف حساباً لحساب المبلغ المتاح.</small>},
  income:{title:"الدخل المسجل · DZD",icon:ArrowDownLeft,node:<strong className="dw-large positive-amount">{money(totals("income"),"DZD",lang)}</strong>},
  expense:{title:"المصروفات · DZD",icon:ArrowUpLeft,node:<><strong className="dw-large">{money(current,"DZD",lang)}</strong><small className="dw-muted">الشهر السابق: {money(prior,"DZD",lang)}</small></>},
  bills:{title:"الالتزامات القادمة",icon:CalendarClock,node:<><strong className="dw-large">{upcomingBills.length} فاتورة</strong>{upcomingBills.slice(0,2).map(b=><small className="dw-muted" key={b.id}>{b.title} · {b.due} · {money(b.amount,b.currency,lang)}</small>)}</>},
