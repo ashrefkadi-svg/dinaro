@@ -328,3 +328,5 @@ body{
  .planner-grid .panel-heading{align-items:flex-start}
  .planner-grid .panel-heading .secondary-btn{padding:7px 8px;font-size:8px}
 }
+
+.planner-status.is-overdue{color:#ff9ca5;border-color:rgba(255,124,139,.28);background:rgba(255,124,139,.08)}
