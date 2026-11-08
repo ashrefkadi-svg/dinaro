@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Activity, ArrowDownRight, ArrowUpRight, BookOpen, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, Download, FileSpreadsheet, FileText, GraduationCap, LayoutDashboard, LockKeyhole, Plus, Search, ShieldCheck, Sparkles, Target, Wallet, X } from "lucide-react";
+import { Activity, CheckCircle2, ChevronDown, Download, FileSpreadsheet, FileText, GraduationCap, LayoutDashboard, LockKeyhole, Plus, Search, ShieldCheck, Sparkles, Wallet } from "lucide-react";
 import { academyCourses, type AcademyLesson } from "./financial-academy";
 import "./financial-platform.css";
 type Currency="DZD"|"EUR"|"USD"|"GBP"|"SAR"|"AED"|"CAD"|"TND";
@@ -36,7 +36,7 @@ export default function FinancialPlatform({lang,transactions,accounts,goals,budg
  const addProfile=()=>{const name=profileName.trim();if(!name||profiles.includes(name))return;const next=[...profiles,name];setProfiles(next);write("dinaro-profiles",next);setProfileName("")};
  const addWallet=()=>{const name=walletName.trim();if(!name)return;const next=[...wallets,{id:crypto.randomUUID(),name,members:["المالك"],balance:0}];setWallets(next);write("dinaro-shared-wallets",next);setWalletName("")};
  const addMember=(id:string)=>{const name=memberName.trim();if(!name)return;const next=wallets.map(w=>w.id===id&&!w.members.includes(name)?{...w,members:[...w.members,name]}:w);setWallets(next);write("dinaro-shared-wallets",next);setMemberName("")};
- const downloadCsv=()=>{const rows=[["date","title","category","type","amount","currency"],...transactions.map(t=>[t.date,t.title,t.category,t.type,String(t.amount),t.currency||"DZD"])];download("dinaro-financial-report.csv","\uFEFF"+rows.map(r=>r.map(x=>'"'+String(x).replaceAll('"','""')+'"').join(",")).join("\n"),"text/csv;charset=utf-8")};
+ const downloadCsv=()=>{const rows=[["date","title","category","type","amount","currency"],...transactions.map(t=>[t.date,t.title,t.category,t.type,String(t.amount),t.currency||"DZD"])];download("dinaro-financial-report.csv","\uFEFF"+rows.map(r=>r.map(x=>'"'+String(x).split('"').join('""')+'"').join(",")).join("\n"),"text/csv;charset=utf-8")};
  const printReport=()=>window.print();
  const enableOffline=async()=>{if(!("serviceWorker" in navigator)){setOfflineReady(false);return}try{const reg=await navigator.serviceWorker.register("/sw.js");await reg.update();setOfflineReady(true)}catch{setOfflineReady(false)}};
  return <div className="fp-root" dir="rtl">
