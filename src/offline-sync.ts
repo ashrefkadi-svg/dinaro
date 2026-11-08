@@ -45,10 +45,11 @@ function openDatabase(): Promise<IDBDatabase> {
 
 export async function enqueueOfflineTransaction(transaction: OfflineTransaction): Promise<void> {
   const db = await openDatabase();
+  const operationId = crypto.randomUUID();
   await new Promise<void>((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, "readwrite");
     tx.objectStore(STORE_NAME).put({
-      id: transaction.id,
+      id: operationId,
       kind: "transaction",
       payload: transaction,
       createdAt: new Date().toISOString(),
