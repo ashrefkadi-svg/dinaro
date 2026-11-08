@@ -110,3 +110,20 @@ The intelligent workspace is available from **More → Intelligent Financial Exp
 ### Current limitations
 
 This is still a local-first frontend prototype. Debt and envelope records, notification state, and appearance preferences are browser-local. Net worth covers account balances and recorded debts only; it does not yet include property, investments, vehicles, or other manually valued assets. Goal contributions update goal progress but are not posted as ledger transactions. Do not use these prototype figures as audited financial statements.
+
+
+## Effortless Experience
+
+The home dashboard now includes a compact beginner-friendly experience layer:
+
+- **One-Tap Actions:** opens the existing transaction form directly for expenses, income, or transfers; it reuses the same validation and save path.
+- **Smart Suggestions:** surfaces simple prompts based on upcoming unpaid bills and whether savings goals exist. Suggestions are informational, not automated financial decisions.
+- **Contextual Guidance / Plain Language Finance:** expandable explanations with practical examples, beginning with cash flow.
+- **Quick Command Center:** recognizes a small set of Arabic, English, and French commands for common sections and transaction entry; unrecognized text falls back to Universal Search. It is not an AI natural-language agent.
+- **Adaptive Experience:** records section visits locally and shows frequently used destinations on the home experience. This is device-local usage history.
+- **Smart Defaults:** remembers the last transaction account, category, currency context, and type in browser local storage. The selected account determines the transaction currency; users can still change all editable fields.
+- **Duplicate Detection:** asks for confirmation when a new transaction matches an existing transaction by date, type, account, currency, amount, and normalized description. It is a heuristic warning, not a guarantee that two records are duplicates.
+- **Personal Themes:** links to the existing Personalization Studio for local accent, density, and balance-privacy preferences.
+- **Micro Celebrations / Financial Journey:** shows savings-goal progress and an optional lightweight celebration. No streak penalties, financial rankings, or pressure mechanics are used.
+
+These experience preferences and usage counts are stored in the current browser. They are not synced across devices. The home dashboard remains a prototype and the underlying financial data is still browser-local.
