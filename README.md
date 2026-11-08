@@ -90,3 +90,23 @@ The `feature/complete-financial-platform` branch adds a dedicated Financial Acad
 This branch is still a browser-local prototype. It does **not** yet provide authenticated multi-user profiles, server-side family permissions, cross-device shared-wallet synchronization, conflict-safe offline write queues, background push notifications, native XLSX generation, or server-backed backups. Do not treat local profile names or shared-wallet member labels as access control. These require a backend, durable database, migrations, authentication, authorization, audit history, and synchronization tests.
 
 Financial Academy lessons are educational material, not individualized investment, legal, or tax advice. Tax and regulatory content must be checked against current official Algerian publications before operational use.
+
+
+## Intelligent financial experience
+
+The intelligent workspace is available from **More → Intelligent Financial Experience** and groups ten capabilities into four focused areas:
+
+- **Spending Patterns:** category-level month-over-month comparisons, separated by currency.
+- **Unusual Activity Detection:** highlights expenses at least 2.5× the prior category average when at least three earlier observations exist. This is a review signal, not fraud detection.
+- **Net Worth Tracker:** account balances less recorded debt balances, shown separately per currency. Other asset classes are not yet represented.
+- **Smart Money Envelopes:** local spending allocations matched to the transaction category and currency. Existing DZD budgets seed the initial envelope list.
+- **Debt Manager:** local debt records with total, paid, remaining amount, currency, and due date. Debt records are currently stored in this browser and are not yet part of a server-backed ledger.
+- **Goal Planner 2.0:** goal progress, target dates, estimated monthly contribution, and manual progress contributions.
+- **Adaptive Dashboard:** reuses the existing dashboard order and visibility preferences.
+- **Quick Actions Center:** shortcuts to transaction entry and existing financial sections.
+- **Smart Notification Center:** in-app alerts for due bills, budget thresholds, unusual expenses, goal deadlines, and debt due dates. Browser notification permission is optional; background push is not included.
+- **Personalization Studio:** local accent color, density, and balance-privacy preferences.
+
+### Current limitations
+
+This is still a local-first frontend prototype. Debt and envelope records, notification state, and appearance preferences are browser-local. Net worth covers account balances and recorded debts only; it does not yet include property, investments, vehicles, or other manually valued assets. Goal contributions update goal progress but are not posted as ledger transactions. Do not use these prototype figures as audited financial statements.
