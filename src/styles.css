@@ -277,3 +277,54 @@ body{
 .toast-success{background:rgba(13,49,43,.96);border-color:rgba(74,222,174,.42);color:#c8f8e1}
 .toast-error{background:rgba(65,27,34,.97);border-color:rgba(232,112,126,.5);color:#ffd7dc;box-shadow:0 12px 42px rgba(0,0,0,.5),0 0 25px rgba(220,80,100,.1)}
 @media(max-width:600px){.type-switch{grid-template-columns:repeat(3,minmax(0,1fr))}.type-switch button{min-width:0;padding-inline:3px;font-size:10px}}
+
+
+/* Financial planner: savings goals, commitments, recurring schedules and calendar */
+.planner-stack{display:grid;gap:16px}
+.planner-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}
+.planner-grid .panel{min-width:0}
+.planner-row{display:flex;align-items:center;gap:10px;padding:13px 0;border-top:1px solid var(--line);min-width:0}
+.planner-icon{width:35px;height:35px;flex:none;display:grid;place-items:center;border-radius:11px}
+.bill-icon{background:rgba(224,163,91,.13);color:#e8b675}
+.recurring-icon{background:rgba(54,221,176,.12);color:#64e7c0}
+.planner-row-main{flex:1;min-width:0}
+.planner-row-main b,.planner-row-main small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.planner-row-main b{font-size:11px;color:var(--text)}
+.planner-row-main small{font-size:9px;color:var(--muted);margin-top:4px}
+.planner-row>strong{font:700 11px "DM Sans",sans-serif;white-space:nowrap}
+.planner-status{font-size:8px;color:#9aabb9;border:1px solid var(--line);border-radius:20px;padding:4px 7px;white-space:nowrap}
+.planner-status.is-paid{color:#65e0b7;border-color:rgba(54,221,176,.22);background:rgba(54,221,176,.07)}
+.planner-status.is-due{color:#e9bd80;border-color:rgba(233,189,128,.22);background:rgba(233,189,128,.07)}
+.planner-meta{display:flex;align-items:center;justify-content:space-between;margin-top:6px}
+.planner-meta small{margin:0!important}
+.planner-meta b{font:700 10px "DM Sans",sans-serif;color:#6ce7bd}
+.planner-complete{display:inline-flex;align-items:center;gap:5px;margin-top:8px;color:#65e0b7;font-size:9px}
+.calendar-event{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.calendar-date{width:45px;height:45px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:11px;background:rgba(54,221,176,.08);border:1px solid rgba(54,221,176,.16)}
+.calendar-date b{font:700 16px "DM Sans",sans-serif;color:#6ce7bd}
+.calendar-date small{font-size:8px;color:var(--muted);margin-top:2px}
+.calendar-event-main{flex:1;min-width:0}
+.calendar-event-main b,.calendar-event-main small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.calendar-event-main b{font-size:11px}
+.calendar-event-main small{font-size:9px;color:var(--muted);margin-top:4px}
+.calendar-event>strong{font:700 11px "DM Sans",sans-serif;white-space:nowrap}
+.planner-grid .panel-heading{gap:8px}
+.planner-grid .panel-heading .secondary-btn{padding:8px 10px;font-size:9px;white-space:nowrap}
+.add-modal .type-switch{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:850px){.planner-grid{grid-template-columns:1fr}}
+@media(max-width:600px){
+ .planner-stack{gap:11px}
+ .planner-grid{gap:11px}
+ .planner-row{gap:7px;flex-wrap:wrap}
+ .planner-icon{width:31px;height:31px}
+ .planner-row-main{flex:1 1 calc(100% - 45px)}
+ .planner-row>strong{margin-inline-start:38px}
+ .planner-status{margin-inline-start:0}
+ .planner-row .row-actions{margin-inline-start:auto}
+ .planner-row .row-actions button{width:25px;height:25px}
+ .calendar-event{gap:9px}
+ .calendar-date{width:40px;height:42px}
+ .calendar-event>strong{font-size:10px}
+ .planner-grid .panel-heading{align-items:flex-start}
+ .planner-grid .panel-heading .secondary-btn{padding:7px 8px;font-size:8px}
+}
