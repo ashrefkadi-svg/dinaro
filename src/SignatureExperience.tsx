@@ -157,6 +157,7 @@ export default function SignatureExperience({
   const motionProps = reduceMotion ? {} : { initial: { opacity: 0, y: 14 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, amount: .12 }, transition: { duration: .48, ease: "easeOut" as const } };
   const blur = privateMode ? "signature-private" : "";
   return <div className="signature-shell">
+    {celebration && <motion.div className="signature-celebration" initial={reduceMotion?false:{opacity:0,y:-10,scale:.96}} animate={{opacity:1,y:0,scale:1}} exit={{opacity:0,y:-8}} role="status"><span><Trophy size={18}/></span><div><b>{lang==="ar"?"إنجاز جديد!":lang==="fr"?"Nouvelle réussite !":"Milestone unlocked!"}</b><small>{celebration}</small></div><Sparkles size={17}/></motion.div>}
     <section className="signature-hero" aria-labelledby="signature-title">
       <div className="signature-orb signature-orb-one"/><div className="signature-orb signature-orb-two"/>
       <div className="signature-hero-top"><div><span className="signature-eyebrow"><i/>{t.eyebrow}</span><h2 id="signature-title">{t.greeting}</h2><p>{t.subtitle}</p></div>
