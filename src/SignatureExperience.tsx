@@ -97,7 +97,7 @@ const money = (value: number, currency: Currency, lang: Lang) =>
   }).format(value);
 const dayKey = () => new Date().toISOString().slice(0, 10);
 const monthKey = dayKey().slice(0, 7);
-const accountKind = (kind: string, lang: Lang) => ({ cash: lang === "ar" ? "نقدي" : lang === "fr" ? "Espèces" : "Cash", bank: lang === "ar" ? "بنكي" : lang === "fr" ? "Bancaire" : "Bank", savings: lang === "ar" ? "ادخار" : lang === "fr" ? "Épargne" : "Savings", wallet: lang === "ar" ? "محفظة" : lang === "fr" ? "Portefeuille" : "Wallet" }[kind] || kind);
+const accountKind = (kind: string, lang: Lang) => { const labels: Record<string, Record<Lang, string>> = { cash: { ar: "نقدي", en: "Cash", fr: "Espèces" }, bank: { ar: "بنكي", en: "Bank", fr: "Bancaire" }, savings: { ar: "ادخار", en: "Savings", fr: "Épargne" }, wallet: { ar: "محفظة", en: "Wallet", fr: "Portefeuille" } }; return labels[kind]?.[lang] || kind; };
 const balanceFor = (account: Account, transactions: Tx[]) =>
   account.opening + transactions.reduce((sum, tx) =>
     sum + (tx.accountId === account.id ? (tx.type === "income" ? tx.amount : -tx.amount) : 0)
