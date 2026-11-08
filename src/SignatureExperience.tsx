@@ -139,7 +139,8 @@ export default function SignatureExperience({
   const expenses = monthTransactions.filter(tx => tx.type === "expense").reduce((sum, tx) => sum + tx.amount, 0);
   const monthNet = income - expenses;
   const categoryRows = Object.entries(monthTransactions.filter(tx => tx.type === "expense").reduce<Record<string, number>>((acc, tx) => {
-    acc[tx.category || (lang === "ar" ? "أخرى" : "Other")] = (acc[tx.category || "Other"] || 0) + tx.amount;
+    const category = tx.category || (lang === "ar" ? "أخرى" : "Other");
+    acc[category] = (acc[category] || 0) + tx.amount;
     return acc;
   }, {})).sort((a, b) => b[1] - a[1]).slice(0, 5);
   const categoryTotal = categoryRows.reduce((sum, row) => sum + row[1], 0);
