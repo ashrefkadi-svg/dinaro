@@ -36,7 +36,7 @@ export default function App(){
  const totals=useMemo(()=>({income:data.transactions.filter(x=>x.type==="income").reduce((a,x)=>a+x.amount,0),expense:data.transactions.filter(x=>x.type==="expense").reduce((a,x)=>a+x.amount,0)}),[data.transactions]);
  const acctBal=(id:string)=>{const a=data.accounts.find(x=>x.id===id);return (a?.opening||0)+data.transactions.reduce((s,x)=>s+(x.accountId===id?(x.type==="income"?x.amount:-x.amount):0)+(x.type==="transfer"&&x.toAccountId===id?x.amount:0),0)};
  const balance=data.accounts.reduce((s,a)=>s+acctBal(a.id),0);
- const spent=(cat:string)=>data.transactions.filter(x=>x.type==="expense"&&x.category===cat).reduce((s,x)=>s+x.amount,0);
+ const spent=(cat:string)=>{const month=new Date().toISOString().slice(0,7);return data.transactions.filter(x=>x.type==="expense"&&x.category===cat&&x.date.slice(0,7)===month).reduce((s,x)=>s+x.amount,0)};
  const navLabel=(p:Page)=>t(p);
  const open=(kind:NonNullable<typeof modal>,id?:string)=>{
   setEditId(id||null);let f={title:"",category:"",amount:"",type:"expense" as "income"|"expense"|"transfer",accountId:data.accounts[0]?.id||"",toAccountId:data.accounts[1]?.id||"",kind:"cash",due:"",date:new Date().toISOString().slice(0,10),saved:""};
@@ -46,7 +46,7 @@ export default function App(){
   if(id&&kind==="goal"){const x=data.goals.find(z=>z.id===id);if(x)f={...f,title:x.title,amount:String(x.target),due:x.due,saved:String(x.saved)}}
   setForm(f);setModal(kind);
  };
- const save=(e:React.FormEvent)=>{e.preventDefault();const n=Number(form.amount);if(modal==="tx"&&form.type==="transfer"&&n>acctBal(form.accountId)){notify(t("insufficient"));return}if(!form.amount||!Number.isFinite(n)||n<0||(modal!=="account"&&n===0)||((modal==="tx"||modal==="account"||modal==="goal")&&!form.title.trim())||(modal==="budget"&&!form.category.trim())||(modal==="tx"&&!data.accounts.some(a=>a.id===form.accountId))||(modal==="tx"&&form.type==="transfer"&&(!form.toAccountId||form.toAccountId===form.accountId))){notify(t("invalid"));return}
+ const save=(e:React.FormEvent)=>{e.preventDefault();const n=Number(form.amount);const prior=editId?data.transactions.find(x=>x.id===editId):undefined;const priorImpact=prior?(prior.accountId===form.accountId?(prior.type==="income"?prior.amount:-prior.amount):0)+(prior.type==="transfer"&&prior.toAccountId===form.accountId?prior.amount:0):0;const available=acctBal(form.accountId)-priorImpact;if(modal==="tx"&&form.type==="transfer"&&n>available){notify(t("insufficient"));return}if(!form.amount||!Number.isFinite(n)||n<0||(modal!=="account"&&n===0)||((modal==="tx"||modal==="account"||modal==="goal")&&!form.title.trim())||(modal==="budget"&&!form.category.trim())||(modal==="tx"&&!data.accounts.some(a=>a.id===form.accountId))||(modal==="tx"&&form.type==="transfer"&&(!form.toAccountId||form.toAccountId===form.accountId))){notify(t("invalid"));return}
  const id=editId||crypto.randomUUID();
  if(modal==="tx"){const x:Tx={id,title:form.title.trim(),category:form.category.trim()||"عام",date:form.date||new Date().toISOString().slice(0,10),amount:n,type:form.type,accountId:form.accountId,...(form.type==="transfer"?{toAccountId:form.toAccountId}:{})};setData(p=>({...p,transactions:editId?p.transactions.map(z=>z.id===id?x:z):[x,...p.transactions]}))}
  if(modal==="account"){const x:Account={id,name:form.title.trim(),kind:form.kind,opening:n};setData(p=>({...p,accounts:editId?p.accounts.map(z=>z.id===id?x:z):[...p.accounts,x]}))}
