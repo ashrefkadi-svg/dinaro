@@ -118,7 +118,7 @@ The home dashboard now includes a compact beginner-friendly experience layer:
 
 - **One-Tap Actions:** opens the existing transaction form directly for expenses, income, or transfers; it reuses the same validation and save path.
 - **Smart Suggestions:** surfaces simple prompts based on upcoming unpaid bills and whether savings goals exist. Suggestions are informational, not automated financial decisions.
-- **Contextual Guidance / Plain Language Finance:** expandable explanations with practical examples, beginning with cash flow.
+- **Contextual Guidance / Plain Language Finance:** a multilingual glossary with practical examples for cash flow, budgets, emergency funds, debt, and net worth.
 - **Quick Command Center:** recognizes a small set of Arabic, English, and French commands for common sections and transaction entry; unrecognized text falls back to Universal Search. It is not an AI natural-language agent.
 - **Adaptive Experience:** records section visits locally and shows frequently used destinations on the home experience. This is device-local usage history.
 - **Smart Defaults:** remembers the last transaction account, category, currency context, and type in browser local storage. The selected account determines the transaction currency; users can still change all editable fields.
