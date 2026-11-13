@@ -3,7 +3,7 @@ import {Compass,MessageCircle,Map,ShieldCheck,Sparkles,RefreshCw,VolumeX} from "
 import {NpcCharacter} from "../features/world/NpcCharacter";
 import {NPC_CAST,CHOICE_LABELS,chooseDialogue,sceneFromProgress} from "../features/world/npc-dialogues";
 import type {NpcId,DialogueScene,PlayerIntent,DialogueReply} from "../features/world/npc-dialogues";
-import {NPC_REGIONS,residentsOf} from "../features/world/npc-definitions";
+import {NPC_REGIONS,residentsOf,emotionFor,motionFor} from "../features/world/npc-definitions";
 import type {NpcRegion} from "../features/world/npc-definitions";
 import {getJourneyState} from "../features/goals/journey";
 import "./world-mobile.css";
@@ -38,11 +38,13 @@ export default function MobileWorld(){
  const npc=roster.includes(selectedNpc)?selectedNpc:roster[0]??"ashraf";
  const [context,setContext]=useState<DialogueScene>("growing");
  const [lastReply,setLastReply]=useState<DialogueReply|null>(null);
+ const [lastIntent,setLastIntent]=useState<PlayerIntent|null>(null);
  const [turn,setTurn]=useState(0);
  const [variantHistory,setVariantHistory]=useState<Record<string,number>>({});
  const [walking,setWalking]=useState(false);
  const active=NPC_CAST[npc];
- const emotion=lastReply?(context==="victory"||context==="milestone"?"joy":context==="discovery"?"surprise":context==="setback"?"calm":"thinking"):"calm";
+ const emotion=lastReply?emotionFor(context,lastIntent??undefined):"calm";
+ const animation=walking?"walk":lastReply?motionFor(context,lastIntent??undefined):context==="victory"?"celebrate":"idle";
 
  function chooseRegion(next:NpcRegion|null){
   const selected=next??(getJourneyState(progress).region.id as NpcRegion);
@@ -50,10 +52,12 @@ export default function MobileWorld(){
   setSelectedNpc(residentsOf(selected)[0]??"ashraf");
   setContext(next==="secret-islands"?"discovery":"welcome");
   setLastReply(null);
+  setLastIntent(null);
  }
  function updateProgress(next:number){
   const valid=Math.min(100,Math.max(0,next));
   setContext(sceneFromProgress(valid,progress));
+  setLastIntent(null);
   setProgress(valid);
   setRegionOverride(null);
   setSelectedNpc(residentsOf(getJourneyState(valid).region.id as NpcRegion)[0]??"ashraf");
@@ -63,6 +67,7 @@ export default function MobileWorld(){
   setSelectedNpc(next);
   setContext("welcome");
   setLastReply(null);
+  setLastIntent(null);
  }
  function talk(choice?:PlayerIntent,scene=context){
   const key=npc+":"+scene+":"+(choice??"line");
@@ -71,6 +76,7 @@ export default function MobileWorld(){
   });
   setVariantHistory(old=>({...old,[key]:result.variant}));
   setLastReply(result);
+  setLastIntent(choice??null);
   setTurn(turn+1);
   setContext(scene);
  }
@@ -104,7 +110,7 @@ export default function MobileWorld(){
      <span className="mw-area-tag">{NPC_REGIONS[region].name}</span>
      <div className="mw-traveler" style={{left:Math.min(76,7+progress*.65)+"%"}}>
        <NpcCharacter id={npc} size="scene"
-         emotion={emotion} motion={walking?"walk":context==="victory"?"celebrate":"idle"}
+         emotion={emotion} motion={animation}
          facing="front" name={active.name}/>
      </div>
    </div>

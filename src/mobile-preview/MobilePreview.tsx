@@ -2,7 +2,7 @@ import {useEffect,useState} from "react";
 import type {CSSProperties,FormEvent,ReactNode} from "react";
 import {
   ArrowDownLeft,ArrowLeft,ArrowUpRight,Bell,BookOpen,
-  ChartNoAxesCombined,Check,ChevronLeft,Compass,Eye,EyeOff,
+  ChartNoAxesCombined,Check,ChevronLeft,Eye,EyeOff,
   GraduationCap,House,Moon,Plus,ShieldCheck,Sparkles,Sun,
   Target,Wallet,X,SlidersHorizontal,CircleHelp,
   CheckCircle2,Lightbulb,TrendingUp,LockKeyhole
