@@ -21,3 +21,18 @@ jobs:
         run: npm run test:api
       - name: Typecheck and production build
         run: npm run build
+      - name: Test and build standalone Safari demo
+        run: |
+          npm run test:mobile
+          npm run build:mobile
+      - name: Confirm fictional public bundle and sprite assets
+        shell: bash
+        run: |
+          test -f dist-mobile/index.html
+          test -f dist-mobile/world/npc/ashraf-sprites.png
+          test -f dist-mobile/world/npc/mira-portraits.png
+          grep -q '/dinaro/assets/' dist-mobile/index.html
+          if grep -R -i -E 'api/auth|api/transactions|server/store|password_hash' dist-mobile/assets; then
+            echo 'Sensitive financial backend reference in public demo'
+            exit 1
+          fi
