@@ -2,7 +2,7 @@ import {useCallback,useEffect,useRef,useState} from "react";
 import type {CSSProperties} from "react";
 import {BookOpen,CloudRain,Compass,House,Map,MessageCircle,Moon,RotateCcw,Save,Sun,TreePine} from "lucide-react";
 import {NpcCharacter} from "./NpcCharacter";
-import {NPC_CAST,chooseDialogue} from "./npc-dialogues";
+import {chooseDialogue} from "./npc-dialogues";
 import {
   MAPS,ROOM_LABELS,QUEST_LABELS,
   newGame,move,interact,changeTime,changeWeather,isValidGameState,

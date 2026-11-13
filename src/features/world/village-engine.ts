@@ -119,7 +119,7 @@ export function isValidGameState(value:unknown):value is GameState{
   (s.talkingTo===null||s.talkingTo==="ashraf")&&
   (s.time==="day"||s.time==="night")&&
   (s.weather==="clear"||s.weather==="rain")&&
-  Number.isSafeInteger(s.steps)&&s.steps>=0&&s.steps<=1_000_000&&
+  typeof s.steps==="number"&&Number.isSafeInteger(s.steps)&&s.steps>=0&&s.steps<=1_000_000&&
   typeof s.lastMessage==="string"&&s.lastMessage.length<=400;
 }
 export function newGame():GameState{return {
