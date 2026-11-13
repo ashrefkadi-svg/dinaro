@@ -42,3 +42,8 @@ public/icon-512.png
 
 # Isolated public mobile preview build
 dist-mobile/
+
+# Offline-generated editable NPC atlas output (single source: scripts/generate-npc-atlases.mjs)
+public/world/npc/*.png
+public/world/npc/*.svg
+public/world/npc/manifest.json

@@ -1,6 +1,7 @@
 import type {CSSProperties} from "react";
 import type {NpcId} from "./npc-dialogues";
 import {NPC_CAST} from "./npc-dialogues";
+import {NPC_ATLAS,npcAssetPaths} from "./npc-assets";
 import type {NpcEmotion,NpcMotion,NpcFacing} from "./npc-definitions";
 
 /**
@@ -8,9 +9,6 @@ import type {NpcEmotion,NpcMotion,NpcFacing} from "./npc-definitions";
  * Each motion uses exactly four consistent transparent frames, supporting four directions.
  * Source SVG for every sheet remains accessible for iterative hand polish.
  */
-const MOTIONS:readonly NpcMotion[]=["idle","walk","talk","celebrate"];
-const FACING:readonly NpcFacing[]=["front","back","left","right"];
-const EMOTIONS:readonly NpcEmotion[]=["calm","joy","thinking","surprise"];
 
 export function NpcCharacter({
  id,emotion="calm",motion="idle",facing="front",size="scene",name
@@ -20,13 +18,14 @@ export function NpcCharacter({
 }){
  const portrait=size!=="scene";
  const scale=portrait?(size==="thumb"?.43:.60):1.7;
- const base=import.meta.env.BASE_URL+"world/npc/"+id+"-"+(portrait?"portraits":"sprites")+".png";
- const row=FACING.indexOf(facing)*MOTIONS.length+MOTIONS.indexOf(motion);
+ const assets=npcAssetPaths(id,import.meta.env.BASE_URL);
+ const base=portrait?assets.portraits:assets.sprites;
+ const row=NPC_ATLAS.directions.indexOf(facing)*NPC_ATLAS.motions.length+NPC_ATLAS.motions.indexOf(motion);
  const frameWidth=portrait?128:80;
  const frameHeight=portrait?160:112;
  const backgroundHeight=portrait?160:1792;
  const imageWidth=portrait?512:320;
- const x=portrait?-EMOTIONS.indexOf(emotion)*frameWidth*scale:0;
+ const x=portrait?-NPC_ATLAS.emotions.indexOf(emotion)*frameWidth*scale:0;
  const y=portrait?0:-row*frameHeight*scale;
  const style={
   width:frameWidth*scale+"px",
