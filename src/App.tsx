@@ -2,25 +2,27 @@ import { useMemo, useState } from "react";
 import { buildOpeningEntry, buildTransactionEntry, ledgerBalance, parseDzdMinor } from "./domain/ledger";
 import { AcademyDemo } from "./features/academy/AcademyDemo";
 import { JourneyDemo } from "./features/goals/JourneyDemo";
+import { ScenarioDemo } from "./features/planning/ScenarioDemo";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Activity, ArrowDownLeft, ArrowLeftRight, ArrowUpLeft, Bell, ChevronDown,
   ChevronLeft, CircleHelp, Ellipsis, Eye, EyeOff, FileText,
   Home, LayoutGrid, Menu, Plus, Search, Settings, ShieldCheck,
-  BookOpen, Gamepad2, Sparkles, Target, TrendingDown, TrendingUp, Wallet, X, Zap
+  BookOpen, Calculator, Gamepad2, Sparkles, Target, TrendingDown, TrendingUp, Wallet, X, Zap
 } from "lucide-react";
 import {
   Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis
 } from "recharts";
 
 type CoreSection = "الرئيسية" | "المعاملات" | "الحسابات" | "الميزانية" | "الأهداف";
-type Section = CoreSection | "الأكاديمية" | "عالم دينارو";
+type Section = CoreSection | "الأكاديمية" | "عالم دينارو" | "المحاكاة";
 const nav: { label: Section; icon: typeof Home }[] = [
   { label: "الرئيسية", icon: Home }, { label: "المعاملات", icon: ArrowLeftRight },
   { label: "الحسابات", icon: Wallet }, { label: "الميزانية", icon: LayoutGrid },
   { label: "الأهداف", icon: Target },
   { label: "الأكاديمية", icon: BookOpen },
-  { label: "عالم دينارو", icon: Gamepad2 }
+  { label: "عالم دينارو", icon: Gamepad2 },
+  { label: "المحاكاة", icon: Calculator }
 ];
 // All figures below are synthetic demonstration fixtures, not real bank records.
 const chartData = [
@@ -133,8 +135,13 @@ function App() {
                 <span><strong>DINARO Academy</strong><small>ألغاز مالية مترابطة ومختبر تعليمي تجريبي</small></span>
                 <ChevronLeft size={19}/>
               </button>
+              <button className="ds-explore-card" onClick={() => setSection("المحاكاة")}>
+                <span className="ds-explore-icon"><Calculator size={24}/></span>
+                <span><strong>ماذا لو؟</strong><small>استكشف توقعات افتراضية بعد 3 و6 و12 شهرًا</small></span>
+                <ChevronLeft size={19}/>
+              </button>
             </section>
-          </> : section === "الأكاديمية" ? <AcademyDemo/> : section === "عالم دينارو" ? <JourneyDemo/> : <SectionView section={section as CoreSection} transactions={filteredTransactions} search={search} balance={balance} onAdd={() => setShowAdd(true)} />}
+          </> : section === "الأكاديمية" ? <AcademyDemo/> : section === "عالم دينارو" ? <JourneyDemo/> : section === "المحاكاة" ? <ScenarioDemo/> : <SectionView section={section as CoreSection} transactions={filteredTransactions} search={search} balance={balance} onAdd={() => setShowAdd(true)} />}
           <footer className="footer"><span>© 2026 DINARO+ · أموالك. مستقبلك.</span><span><ShieldCheck size={13}/> الخصوصية أولاً</span><span>الإصدار التجريبي 0.2</span></footer>
         </div>
       </main>
