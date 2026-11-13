@@ -68,3 +68,17 @@ Do not commit API keys, passwords, session tokens, private certificates, product
 ## License
 
 No license has been selected yet. Until one is added, all rights are reserved by the copyright holder.
+
+
+## Local manual ledger preview (draft PR #3)
+
+This branch includes a **separate** locally persisted manual ledger. The regular dashboard is still populated by synthetic in-memory fixtures. They are not the same data source.
+
+To try the local preview on Node.js 22 (two terminals):
+
+1. npm install
+2. npm run dev:api
+3. npm run dev
+4. Open http://localhost:5173 and choose **دفتر محلي**.
+
+For API integration tests run npm run test:api. The API binds to localhost only. SQLite records are not encrypted at rest, and this preview must not be used for actual sensitive banking data or deployed to the public Internet. Details: docs/LOCAL_BACKEND.md.
