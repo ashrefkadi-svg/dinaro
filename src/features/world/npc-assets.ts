@@ -11,6 +11,8 @@ export const NPC_ATLAS={
  motions:["idle","walk","talk","celebrate"] as readonly NpcMotion[],
  portraitWidth:128,
  portraitHeight:160,
+ portraitRows:2,
+ eyelids:["open","closed"] as const,
  emotions:["calm","joy","thinking","surprise"] as readonly NpcEmotion[]
 } as const;
 

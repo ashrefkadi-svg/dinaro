@@ -26,6 +26,8 @@ test("six original pixel art characters have deterministic frame atlases",()=>{
  assert.deepEqual(manifest.portrait.emotions,["calm","joy","thinking","surprise"]);
  assert.equal(manifest.sprite.columns*manifest.sprite.rows,64);
  assert.equal(manifest.portrait.columns,4);
+ assert.equal(manifest.portrait.rows,2);
+ assert.deepEqual(manifest.portrait.eyelids,["open","closed"]);
 });
 
 test("all 12 transparent PNG atlases render at exact sprite-sheet dimensions",()=>{
@@ -36,7 +38,7 @@ test("all 12 transparent PNG atlases render at exact sprite-sheet dimensions",()
   assert.equal(sheet.width,320);
   assert.equal(sheet.height,1792);
   assert.equal(face.width,512);
-  assert.equal(face.height,160);
+  assert.equal(face.height,320);
   assert.ok(sheet.bytes>1000);
   assert.ok(face.bytes>1000);
   sprites.push(sheet.sha);
@@ -44,7 +46,7 @@ test("all 12 transparent PNG atlases render at exact sprite-sheet dimensions",()
   const svg=readFileSync(join(path,id+"-sprites.svg"),"utf8");
   assert.match(svg,/viewBox="0 0 320 1792"/);
   const psvg=readFileSync(join(path,id+"-portraits.svg"),"utf8");
-  assert.match(psvg,/viewBox="0 0 512 160"/);
+  assert.match(psvg,/viewBox="0 0 512 320"/);
  }
  assert.equal(new Set(sprites).size,6,"sprites should not be reused between characters");
  assert.equal(new Set(portraits).size,6,"portraits should not be reused between characters");

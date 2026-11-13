@@ -1,0 +1,78 @@
+name: DINARO full project ZIP — source + previews
+on:
+  workflow_dispatch:
+  push:
+    branches: ["feat/dinaro-npc-art-polish-v4"]
+permissions:
+  contents: read
+jobs:
+  build-project-archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install
+        run: npm install --no-audit --no-fund
+      - name: Validate project and demo
+        run: |
+          npm run check
+          npm run test:mobile
+          npm run build:mobile
+      - name: Verify assets and keep private files out
+        shell: bash
+        run: |
+          test -f dist/index.html
+          test -f dist-mobile/index.html
+          test -f dist-mobile/world/npc/ashraf-sprites.png
+          test -f dist-mobile/world/npc/mira-portraits.png
+          if grep -R -i -E 'api/auth|api/transactions|server/store|password_hash' dist-mobile/assets; then
+            echo "Sensitive server code found in public preview bundle"
+            exit 1
+          fi
+      - name: Build complete clean source ZIP with compiled previews
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "${RUNNER_TEMP}/package/DINARO-PLUS"
+          git archive --format=tar HEAD | tar -xf - -C "${RUNNER_TEMP}/package/DINARO-PLUS"
+          cp -a public/world "${RUNNER_TEMP}/package/DINARO-PLUS/public/"
+          cp -a public/icon-192.png public/icon-512.png public/apple-touch-icon.png "${RUNNER_TEMP}/package/DINARO-PLUS/public/"
+          cp -a dist dist-mobile "${RUNNER_TEMP}/package/DINARO-PLUS/"
+          cat > "${RUNNER_TEMP}/package/DINARO-PLUS/START-HERE.txt" <<'EOF'
+          DINARO+ — FULL DEVELOPMENT PROJECT ARCHIVE
+          Includes: tracked source, TypeScript/React Vite app, source backend,
+          UI design system, tests, project docs, built previews and generated
+          character sprite/portrait atlases. Node 22 recommended.
+
+          TO RUN:
+            npm install
+            npm run dev
+            npm run dev:mobile
+            npm run check
+            npm run build
+            npm run build:mobile
+
+          PUBLIC STATIC EXAMPLE:
+            dist-mobile/index.html is a compiled DESIGN DEMO, not a real bank.
+            For a web host, serve the dist-mobile directory with /dinaro/ base.
+
+          NOTE:
+            This is the complete current repository snapshot, NOT a finished,
+            audited, licensed, production-ready financial institution product.
+            Some features are prototypes and require approval.
+            No actual user account, credential or real money is bundled.
+          EOF
+          cd "${RUNNER_TEMP}/package"
+          zip -q -r -X "${RUNNER_TEMP}/DINARO-PLUS-complete.zip" DINARO-PLUS
+          test -s "${RUNNER_TEMP}/DINARO-PLUS-complete.zip"
+          unzip -tq "${RUNNER_TEMP}/DINARO-PLUS-complete.zip" | tail -2
+          sha256sum "${RUNNER_TEMP}/DINARO-PLUS-complete.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DINARO-PLUS-complete-project
+          path: ${{ runner.temp }}/DINARO-PLUS-complete.zip
+          retention-days: 30
+          compression-level: 0

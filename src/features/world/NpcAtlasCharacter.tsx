@@ -2,6 +2,7 @@ import type {CSSProperties} from "react";
 import type {NpcId} from "./npc-dialogues";
 import {NPC_CAST} from "./npc-dialogues";
 import {NPC_ATLAS,npcAssetPaths} from "./npc-assets";
+import "./npc-art.css";
 import type {NpcEmotion,NpcMotion,NpcFacing} from "./npc-definitions";
 
 /**
@@ -23,7 +24,7 @@ export function NpcCharacter({
  const row=NPC_ATLAS.directions.indexOf(facing)*NPC_ATLAS.motions.length+NPC_ATLAS.motions.indexOf(motion);
  const frameWidth=portrait?128:80;
  const frameHeight=portrait?160:112;
- const backgroundHeight=portrait?160:1792;
+ const backgroundHeight=portrait?320:1792;
  const imageWidth=portrait?512:320;
  const x=portrait?-NPC_ATLAS.emotions.indexOf(emotion)*frameWidth*scale:0;
  const y=portrait?0:-row*frameHeight*scale;
@@ -33,11 +34,12 @@ export function NpcCharacter({
   backgroundImage:'url("'+base+'")',
   backgroundSize:(imageWidth*scale)+"px "+(backgroundHeight*scale)+"px",
   backgroundPosition:x+"px "+y+"px",
-  "--npc-travel":"-"+(imageWidth*scale)+"px"
+  "--npc-travel":"-"+(imageWidth*scale)+"px",
+  "--npc-blink-offset":"-"+(frameHeight*scale)+"px"
  } as CSSProperties;
  return <span
   key={id+"-"+size+"-"+motion+"-"+facing}
-  className={"npc-art npc-art--"+size+(portrait?" npc-art--portrait-sheet":" npc-art--animated")}
+  className={"npc-art npc-art--"+size+(portrait?" npc-art--portrait-sheet":" npc-art--animated")+(motion==="idle"?" npc-art--idle":"")}
   style={style}
   role="img"
   aria-label={(name??NPC_CAST[id].name)+" — "+(portrait?"تعبير "+emotion:"حركة "+motion+"، اتجاه "+facing)}

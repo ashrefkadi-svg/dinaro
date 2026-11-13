@@ -29,7 +29,7 @@ const L=(pts,c,width=2)=>'<polyline points="'+pts+'" fill="none" stroke="'+c+'" 
 function shade(hex,d){
  return "#"+hex.slice(1).match(/../g).map(v=>Math.max(0,Math.min(255,parseInt(v,16)+d)).toString(16).padStart(2,"0")).join("");
 }
-function head(p,emotion,dir){
+function head(p,emotion,dir,{blink=false,talking=false}={}){
  const [skin,hair,coat,trim,accent,,kind]=p;
  let s=R(29,29,26,26,shade(skin,-12))+R(31,28,22,26,skin);
  s+=R(27,25,29,12,shade(hair,-23))+R(29,21,24,10,hair)+R(33,19,13,5,shade(hair,18));
@@ -37,6 +37,7 @@ function head(p,emotion,dir){
  s+=R(30,25,12,5,shade(hair,15))+R(44,25,10,4,shade(hair,4));
  if(kind==="keeper"||kind==="explorer")s+=R(22,38,6,42,shade(hair,14))+R(56,38,6,40,hair);
  if(dir==="back"){s+=R(31,30,23,24,hair);return s;}
+ if(blink){s+=L("34,40 39,41","#302d3b",2)+L("46,40 51,41","#302d3b",2)+L("39,52 46,52","#9b5557",1);return s;}
  if(dir==="left"||dir==="right"){
    s+=R(46,40,4,4,"#272b39")+R(49,52,6,2,"#9a5656");
  }else if(emotion==="joy"){
@@ -53,6 +54,7 @@ function head(p,emotion,dir){
  if(kind==="keeper")s+=R(29,27,8,5,trim)+R(31,24,4,3,accent);
  if(kind==="sage")s+=P("33,50 40,55 49,53 55,55 47,70 35,66",hair)+R(34,43,17,2,trim);
  if(kind==="explorer")s+=P("19,31 29,24 46,19 58,25 63,33 18,34",coat)+R(24,31,35,3,trim);
+ if(talking && dir==="front")s+=R(39,49,10,7,skin)+R(41,51,5,4,"#a4555c");
  return s;
 }
 function accessory(p,frame,motion){
@@ -82,14 +84,24 @@ function sprite(p,dir,motion,frame){
  s+=R(34,59,3,28,shade(coat,22))+R(48,59,3,26,shade(coat,17));
  s+=P("39,55 49,59 43,69 35,62",trim)+R(34,79,26,5,boots)+R(43,78,8,8,trim)+R(45,80,4,4,accent);
  s+=R(35,70,2,6,trim)+R(49,70,2,6,trim);
+ // Pixel-couture: handmade-style parallel seams, clasp and embroidered diamond.
+ s+=R(32,64,2,17,shade(coat,28))+R(56,64,2,17,shade(coat,-33));
+ s+=P("40,71 43,68 46,71 43,75",trim)+R(42,71,2,2,accent);
+ s+=R(34,85,3,2,trim)+R(51,85,3,2,trim)+R(32+step,103,5,2,shade(boots,17));
  s+=R(23,60+hand,10,22,shade(coat,-10))+R(24,78+hand,9,10,skin)+R(24,75+hand,8,3,trim);
  s+=R(54,59-hand/2,10,23,shade(coat,-10))+R(55,78-hand/2,9,10,skin)+R(55,75-hand/2,8,3,trim);
  s+=R(36,48,11,11,shade(skin,-13));
- s+=head(p,celebrate?"joy":motion==="talk"&&frame%2?"joy":"calm",dir);
+ s+=head(p,celebrate?"joy":"calm",dir,{blink:motion==="idle"&&frame===3,talking:motion==="talk"&&frame%2===1});
  s+=accessory(p,frame,motion);
+ if(celebrate){
+  // Two small celebratory particles, present only in the expressive frames.
+  const dy=frame%2?0:4;
+  s+=P("16,"+(39+dy)+" 19,"+(34+dy)+" 22,"+(39+dy)+" 19,"+(44+dy),trim);
+  s+=P("65,"+(30+dy)+" 68,"+(26+dy)+" 71,"+(30+dy)+" 68,"+(34+dy),accent);
+ }
  return s+(side?"</g>":"")+"</g>";
 }
-function portrait(p,emotion){
+function portrait(p,emotion,blink=false){
  const [skin,hair,coat,trim,accent,boots,kind]=p;
  let s=P("5,159 15,111 37,99 91,100 113,115 124,159",shade(coat,-25));
  s+=P("12,159 24,114 45,106 84,106 104,116 116,159",coat);
@@ -105,7 +117,8 @@ function portrait(p,emotion){
  if(kind==="keeper")s+=R(29,41,10,14,trim)+R(31,36,9,7,accent);
  if(kind==="explorer")s+=P("17,38 32,24 76,17 103,38 115,44 17,44",coat)+R(25,40,82,6,trim);
  if(kind==="sage")s+=P("42,87 52,102 74,97 88,85 81,114 67,130 52,118",hair)+R(49,66,19,3,trim)+R(73,66,19,3,trim);
- if(emotion==="joy")s+=L("48,68 54,64 61,68","#2e3139",3)+L("73,68 79,64 85,68","#2e3139",3)+P("55,91 65,96 77,89 74,99 63,103 55,98","#ae5759");
+ if(blink)s+=L("48,70 58,71","#2e3139",3)+L("74,70 84,71","#2e3139",3)+L("61,94 69,96 76,93","#9e5e5f",2);
+ else if(emotion==="joy")s+=L("48,68 54,64 61,68","#2e3139",3)+L("73,68 79,64 85,68","#2e3139",3)+P("55,91 65,96 77,89 74,99 63,103 55,98","#ae5759");
  else if(emotion==="thinking")s+=R(48,66,11,3,"#31313d")+R(73,68,12,4,"#31313d")+R(62,94,13,2,"#9e585b");
  else if(emotion==="surprise")s+=R(50,66,7,10,"#31323d")+R(75,66,7,10,"#31323d")+R(65,90,8,13,"#9e535a");
  else s+=R(49,68,8,6,"#31323d")+R(75,68,8,6,"#31323d")+L("61,94 69,96 76,93","#9e5e5f",2);
@@ -126,12 +139,13 @@ function spriteSheet(p,id){
 }
 function portraitSheet(p,id){
  let body="";
- for(let i=0;i<emotions.length;i++)body+='<g transform="translate('+(i*128)+' 0)">'+portrait(p,emotions[i])+"</g>";
- return '<svg xmlns="http://www.w3.org/2000/svg" width="512" height="160" viewBox="0 0 512 160" shape-rendering="crispEdges"><title>'+id+' four expressive portraits</title>'+body+"</svg>";
+ for(let row=0;row<2;row++)for(let i=0;i<emotions.length;i++)
+  body+='<g transform="translate('+(i*128)+' '+(row*160)+')">'+portrait(p,emotions[i],row===1)+"</g>";
+ return '<svg xmlns="http://www.w3.org/2000/svg" width="512" height="320" viewBox="0 0 512 320" shape-rendering="crispEdges"><title>'+id+' four expressions with optional eyelid frames</title>'+body+"</svg>";
 }
-const manifest={version:2,kind:"original editable pixel art",characters:Object.keys(palettes),
+const manifest={version:3,kind:"original editable pixel art",characters:Object.keys(palettes),
  sprite:{frameWidth:80,frameHeight:112,columns:4,rows:16,directions,motions},
- portrait:{frameWidth:128,frameHeight:160,columns:4,emotions},
+ portrait:{frameWidth:128,frameHeight:160,columns:4,rows:2,emotions,eyelids:["open","closed"]},
  source:"scripts/generate-npc-atlases.mjs"};
 for(const [id,p] of Object.entries(palettes)){
  for(const [suffix,svg] of [["sprites",spriteSheet(p,id)],["portraits",portraitSheet(p,id)]]){

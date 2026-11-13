@@ -59,11 +59,6 @@
 
 
 /* NPC Art Atlas 2.0: real transparent sprite sheets, four frames per motion and direction. */
-.npc-art{display:inline-block;flex:none;vertical-align:middle;background-repeat:no-repeat;
- image-rendering:pixelated;image-rendering:crisp-edges;transform:translateZ(0)}
-.npc-art--animated{animation:npc-atlas-frames .75s steps(4,end) infinite}
-.npc-art--portrait-sheet{animation:none}
-@keyframes npc-atlas-frames{from{background-position-x:0}to{background-position-x:var(--npc-travel)}}
 .npc-person .npc-symbol{width:65px;height:72px;display:grid;place-items:center;
  background:linear-gradient(145deg,var(--ds-elevated),var(--ds-surface));border:1px solid var(--ds-border);border-radius:12px;overflow:hidden}
 .npc-person{min-height:131px}
@@ -83,4 +78,4 @@
 .npc-feature-text>strong{font-size:14px;color:var(--ds-emerald)}
 .npc-feature-text>p{color:var(--ds-text);font-size:12px;line-height:1.9;margin:8px 0}
 @media(max-width:650px){.npc-stage{flex-direction:column}.npc-stage-art{min-height:195px;width:100%}.npc-feature-bubble{align-items:flex-start}}
-@media(prefers-reduced-motion:reduce){.npc-art--animated{animation:none!important}}
+
