@@ -39,3 +39,6 @@ Thumbs.db
 public/apple-touch-icon.png
 public/icon-192.png
 public/icon-512.png
+
+# Isolated public mobile preview build
+dist-mobile/

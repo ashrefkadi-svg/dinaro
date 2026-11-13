@@ -13,7 +13,10 @@
     "test:api": "node --experimental-sqlite --test server/store.test.mjs server/api.test.mjs",
     "predev": "node scripts/generate-brand-icons.mjs",
     "prebuild": "node scripts/generate-brand-icons.mjs",
-    "test:brand": "node --test src/ui/brand/brand.test.mjs"
+    "test:brand": "node --test src/ui/brand/brand.test.mjs",
+    "build:mobile": "node scripts/generate-brand-icons.mjs && vite build --config vite.mobile-preview.config.ts && node scripts/finalize-mobile-preview.mjs",
+    "test:mobile": "node --experimental-strip-types --test src/mobile-preview/data.test.mjs",
+    "dev:mobile": "vite --open /mobile-preview.html"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
