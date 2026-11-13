@@ -11,7 +11,8 @@ const amountText=(value:string)=>formatDzdMinor(BigInt(value));
 function minorString(raw:string,allowZero=false):string {
   const trimmed=raw.trim();
   if(allowZero&&(trimmed==="0"||trimmed==="0,00"||trimmed==="0.00"))return "0";
-  return parseDzdMinor(trimmed).toString();
+  try { return parseDzdMinor(trimmed).toString(); }
+  catch { throw new Error("أدخل مبلغًا صالحًا بالدينار الجزائري، بحد أقصى منزلتين عشريتين."); }
 }
 function messageFor(error:unknown):string {
   if(error instanceof LocalApiError){
