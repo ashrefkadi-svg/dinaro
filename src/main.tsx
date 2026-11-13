@@ -1,8 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { MotionConfig } from "motion/react";
 import App from "./App";
+import { DesignSettings } from "./design-system/DesignSettings";
 import "./styles.css";
+import "./design-system/tokens.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode><App /></React.StrictMode>
+  <React.StrictMode>
+    <MotionConfig reducedMotion="user">
+      <App />
+      <DesignSettings />
+    </MotionConfig>
+  </React.StrictMode>
 );

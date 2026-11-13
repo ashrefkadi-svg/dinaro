@@ -2,8 +2,8 @@ import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Activity, ArrowDownLeft, ArrowLeftRight, ArrowUpLeft, Bell, ChevronDown,
-  ChevronLeft, CircleHelp, CreditCard, Ellipsis, Eye, EyeOff, FileText,
-  Home, LayoutGrid, LogOut, Menu, Plus, Search, Settings, ShieldCheck,
+  ChevronLeft, CircleHelp, Ellipsis, Eye, EyeOff, FileText,
+  Home, LayoutGrid, Menu, Plus, Search, Settings, ShieldCheck,
   Sparkles, Target, TrendingDown, TrendingUp, Wallet, X, Zap
 } from "lucide-react";
 import {
@@ -16,6 +16,7 @@ const nav: { label: Section; icon: typeof Home }[] = [
   { label: "الحسابات", icon: Wallet }, { label: "الميزانية", icon: LayoutGrid },
   { label: "الأهداف", icon: Target }
 ];
+// All figures below are synthetic demonstration fixtures, not real bank records.
 const chartData = [
   { day: "01", income: 180000, expense: 90000 }, { day: "05", income: 205000, expense: 112000 },
   { day: "09", income: 195000, expense: 104000 }, { day: "13", income: 248000, expense: 132000 },
@@ -70,17 +71,18 @@ function App() {
       <main className="main-area">
         <header className="topbar">
           <div className="topbar-start"><button className="icon-btn menu-toggle" onClick={() => setMobileMenu(true)}><Menu size={20}/></button><div className="breadcrumb">مساحتي <ChevronLeft size={14}/> <b>{section}</b></div></div>
-          <div className="topbar-actions"><div className="search-box"><Search size={17}/><input placeholder="ابحث عن معاملة أو حساب..." /></div><button className="icon-btn notification-btn" onClick={() => notify("لا توجد إشعارات جديدة")}><Bell size={19}/><i/></button><div className="top-avatar">AK</div></div>
+          <div className="topbar-actions"><div className="search-box"><Search size={17}/><input placeholder="ابحث عن معاملة أو حساب..." /></div><button className="icon-btn notification-btn" aria-label="الإشعارات" onClick={() => notify("لا توجد إشعارات جديدة")}><Bell size={19}/><i/></button><div className="top-avatar">AK</div></div>
         </header>
         <div className="page-content">
+          <div className="ds-demo-notice" role="status"><CircleHelp size={18} aria-hidden="true"/><span><strong>وضع العرض التجريبي</strong> — الأرصدة والمعاملات والرسوم البيانية أمثلة غير مرتبطة بحساب مصرفي حقيقي، والإضافات لا تُحفظ بعد إغلاق الصفحة.</span></div>
           <div className="welcome-row"><div><div className="eyebrow"><span className="live-dot"/> مساحتك المالية في مكان واحد</div><h1>{section === "الرئيسية" ? "صباح الخير، أشرف" : section}</h1><p>إليك نظرة واضحة على وضعك المالي. خطوة صغيرة اليوم تصنع فرقاً غداً.</p></div><div className="welcome-actions"><button className="secondary-btn" onClick={() => notify("تم تحديث بيانات العرض") }><Activity size={16}/> تحديث البيانات</button><button className="primary-btn" onClick={() => setShowAdd(true)}><Plus size={17}/> إضافة معاملة</button></div></div>
           {section === "الرئيسية" ? <>
             <section className="overview-grid">
               <motion.div className="balance-card" initial={{opacity:0,y:12}} animate={{opacity:1,y:0}}>
-                <div className="balance-glow"/><div className="balance-top"><span>إجمالي رصيدك</span><button onClick={() => setBalanceVisible(!balanceVisible)}>{balanceVisible ? <Eye size={17}/> : <EyeOff size={17}/>}</button><span className="balance-period">كل الحسابات <ChevronDown size={13}/></span></div>
+                <div className="balance-glow"/><div className="balance-top"><span>إجمالي رصيدك</span><button type="button" aria-label={balanceVisible ? "إخفاء الرصيد التجريبي" : "إظهار الرصيد التجريبي"} onClick={() => setBalanceVisible(!balanceVisible)}>{balanceVisible ? <Eye size={17}/> : <EyeOff size={17}/>}</button><span className="balance-period">كل الحسابات <ChevronDown size={13}/></span></div>
                 <div className="balance-value">{balanceVisible ? money(balance) : "••••••••"} <small>دج</small></div>
                 <div className="balance-change"><span><TrendingUp size={14}/> +8.4%</span><small>مقارنة بالشهر الماضي</small></div>
-                <div className="balance-footer"><div><small>آخر تحديث</small><b>اليوم، الآن</b></div><div className="balance-chip"><ShieldCheck size={14}/> بياناتك تحت سيطرتك</div></div>
+                <div className="balance-footer"><div><small>آخر تحديث</small><b>بيانات عرض</b></div><div className="balance-chip"><ShieldCheck size={14}/> بياناتك تحت سيطرتك</div></div>
               </motion.div>
               <div className="stat-card"><div className="stat-heading"><span className="stat-icon income-icon"><ArrowDownLeft size={18}/></span><span>إجمالي الدخل</span><Ellipsis size={18}/></div><strong>{money(totals.income + 97000)} <small>دج</small></strong><div className="stat-foot positive"><TrendingUp size={14}/> <b>12.8%</b><span>عن الشهر الماضي</span></div><div className="mini-bars income-bars"><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/></div></div>
               <div className="stat-card"><div className="stat-heading"><span className="stat-icon expense-icon"><ArrowUpLeft size={18}/></span><span>إجمالي المصروفات</span><Ellipsis size={18}/></div><strong>{money(totals.expense + 97000)} <small>دج</small></strong><div className="stat-foot negative"><TrendingDown size={14}/> <b>4.2%</b><span>عن الشهر الماضي</span></div><div className="mini-bars expense-bars"><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/></div></div>
