@@ -1,5 +1,5 @@
 import type {NpcEmotion,NpcMotion,NpcFacing} from "./npc-definitions.ts";
-import {emotionFor,motionFor} from "./npc-definitions";
+import {emotionFor,motionFor} from "./npc-definitions.ts";
 import type {DialogueScene,PlayerIntent} from "./npc-dialogues";
 
 export interface NpcState{
