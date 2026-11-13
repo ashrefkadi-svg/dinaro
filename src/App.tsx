@@ -3,11 +3,12 @@ import { buildOpeningEntry, buildTransactionEntry, ledgerBalance, parseDzdMinor 
 import { AcademyDemo } from "./features/academy/AcademyDemo";
 import { JourneyDemo } from "./features/goals/JourneyDemo";
 import { ScenarioDemo } from "./features/planning/ScenarioDemo";
+import { LocalWallet } from "./features/wallet/LocalWallet";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Activity, ArrowDownLeft, ArrowLeftRight, ArrowUpLeft, Bell, ChevronDown,
   ChevronLeft, CircleHelp, Ellipsis, Eye, EyeOff, FileText,
-  Home, LayoutGrid, Menu, Plus, Search, Settings, ShieldCheck,
+  Database, Home, LayoutGrid, Menu, Plus, Search, Settings, ShieldCheck,
   BookOpen, Calculator, Gamepad2, Sparkles, Target, TrendingDown, TrendingUp, Wallet, X, Zap
 } from "lucide-react";
 import {
@@ -15,10 +16,11 @@ import {
 } from "recharts";
 
 type CoreSection = "الرئيسية" | "المعاملات" | "الحسابات" | "الميزانية" | "الأهداف";
-type Section = CoreSection | "الأكاديمية" | "عالم دينارو" | "المحاكاة";
+type Section = CoreSection | "الأكاديمية" | "عالم دينارو" | "المحاكاة" | "دفتر محلي";
 const nav: { label: Section; icon: typeof Home }[] = [
   { label: "الرئيسية", icon: Home }, { label: "المعاملات", icon: ArrowLeftRight },
   { label: "الحسابات", icon: Wallet }, { label: "الميزانية", icon: LayoutGrid },
+  { label: "دفتر محلي", icon: Database },
   { label: "الأهداف", icon: Target },
   { label: "الأكاديمية", icon: BookOpen },
   { label: "عالم دينارو", icon: Gamepad2 },
@@ -141,7 +143,7 @@ function App() {
                 <ChevronLeft size={19}/>
               </button>
             </section>
-          </> : section === "الأكاديمية" ? <AcademyDemo/> : section === "عالم دينارو" ? <JourneyDemo/> : section === "المحاكاة" ? <ScenarioDemo/> : <SectionView section={section as CoreSection} transactions={filteredTransactions} search={search} balance={balance} onAdd={() => setShowAdd(true)} />}
+          </> : section === "الأكاديمية" ? <AcademyDemo/> : section === "عالم دينارو" ? <JourneyDemo/> : section === "المحاكاة" ? <ScenarioDemo/> : section === "دفتر محلي" ? <LocalWallet/> : <SectionView section={section as CoreSection} transactions={filteredTransactions} search={search} balance={balance} onAdd={() => setShowAdd(true)} />}
           <footer className="footer"><span>© 2026 DINARO+ · أموالك. مستقبلك.</span><span><ShieldCheck size={13}/> الخصوصية أولاً</span><span>الإصدار التجريبي 0.2</span></footer>
         </div>
       </main>
