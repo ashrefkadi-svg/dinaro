@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<defs><radialGradient id="icon-bg" cx=".76" cy=".15" r="1">
+<stop offset="0" stop-color="#163D37"/><stop offset=".5" stop-color="#0D1E22"/><stop offset="1" stop-color="#081116"/></radialGradient></defs>
+<rect width="512" height="512" rx="106" fill="url(#icon-bg)"/>
+<rect x="5" y="5" width="502" height="502" rx="101" fill="none" stroke="#46EDBC" stroke-opacity=".28" stroke-width="5"/>
+<svg x="36" y="54" width="440" height="422" viewBox="0 0 256 256">
+<defs>
+<linearGradient id="bars" x1="0" y1="0" x2=".9" y2="1"><stop offset="0" stop-color="#7DFFE0"/><stop offset=".32" stop-color="#2CEEB2"/><stop offset=".72" stop-color="#00B879"/><stop offset="1" stop-color="#087253"/></linearGradient>
+<linearGradient id="sweep" x1="0" y1="1" x2=".8" y2="0"><stop offset="0" stop-color="#00DCA4"/><stop offset=".54" stop-color="#0CF2B2"/><stop offset="1" stop-color="#00B975"/></linearGradient>
+<linearGradient id="plus" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A0FFEB"/><stop offset=".55" stop-color="#2AF6C0"/><stop offset="1" stop-color="#00B882"/></linearGradient>
+</defs>
+<path data-part="growth-bar-1" d="M61 118 C61 111 66 106 73 103 L90 97 C98 94 104 99 104 107 L104 170 Q104 180 94 181 L72 182 Q61 182 61 171 Z" fill="url(#bars)"/>
+<path data-part="growth-bar-2" d="M112 93 C112 86 116 81 123 78 L141 71 C149 68 155 73 155 81 L155 156 Q155 165 146 168 L123 173 Q112 175 112 165 Z" fill="url(#bars)"/>
+<path data-part="growth-bar-3" d="M162 64 C162 56 166 51 173 48 L192 41 C200 38 206 44 206 52 L206 143 Q206 152 197 156 L173 165 Q162 167 162 155 Z" fill="url(#bars)"/>
+<path data-part="orbit" d="M38 175 C22 195 31 207 55 210 C96 215 148 190 196 162 C220 149 232 144 239 155 C238 139 225 132 210 137 C192 142 167 159 140 172 C93 198 49 202 37 190 C33 187 34 181 38 175 Z" fill="url(#sweep)"/>
+<path data-part="plus" d="M214 164 Q214 160 218 160 L224 160 Q228 160 228 164 L228 175 L238 175 Q242 175 242 179 L242 185 Q242 189 238 189 L228 189 L228 200 Q228 204 224 204 L218 204 Q214 204 214 200 L214 189 L204 189 Q200 189 200 185 L200 179 Q200 175 204 175 L214 175 Z" fill="url(#plus)" stroke="#9CFFE2" stroke-width="1.4" stroke-opacity=".6"/>
+</svg>
+</svg>

@@ -408,3 +408,24 @@ html[data-dinaro-theme="light"] {
   .p-footer{font-size:10px;gap:11px}
   .p-add-modal{max-height:calc(100vh - 100px);overflow-y:auto}
 }
+
+
+/* Official DINARO+ 1.0 brand mark: isolated symbol, no text drawn into the logo. */
+.sidebar .brand .brand-mark {
+  width:48px;height:48px;min-width:48px;overflow:hidden;
+  border:1px solid color-mix(in srgb,var(--ds-emerald) 37%,var(--ds-border));
+  border-radius:15px;background:#0b171a;
+  box-shadow:0 9px 25px #0003;
+}
+.sidebar .brand .brand-mark > img {
+  display:block;width:100%;height:100%;object-fit:contain;
+  padding:2px;
+}
+.p-header-brand{display:none;align-items:center;gap:8px;direction:ltr;color:var(--ds-text);
+  font:800 16px "DM Sans","IBM Plex Sans Arabic",sans-serif;letter-spacing:-.35px;white-space:nowrap}
+.p-header-brand img{width:34px;height:34px;object-fit:contain;flex:none}
+.p-header-brand b{color:var(--ds-emerald)}
+@media(max-width:760px){
+  .topbar .p-header-brand{display:flex}
+  .topbar .topbar-start{gap:8px}
+}

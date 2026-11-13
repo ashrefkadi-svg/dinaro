@@ -12,6 +12,7 @@ import {AcademyDemo} from "./features/academy/AcademyDemo";
 import {JourneyDemo} from "./features/goals/JourneyDemo";
 import {ScenarioDemo} from "./features/planning/ScenarioDemo";
 import {LocalWallet} from "./features/wallet/LocalWallet";
+import {BrandMark} from "./ui/brand/BrandMark";
 import {GlassCard,PremiumDashboard,PremiumMobileNav} from "./ui/premium/PremiumDashboard";
 import type {MainSection} from "./ui/premium/PremiumDashboard";
 import {categoryTotals,summarizeEntries} from "./ui/premium/selectors";
@@ -113,7 +114,7 @@ export default function App(){
   return <div className={"app-shell"+(compact?" p-compact":"")}>
     <aside className={"sidebar"+(mobileMenu?" sidebar-open":"")} aria-label="القائمة الجانبية">
       <div className="brand">
-        <div className="brand-mark" aria-hidden="true"><span>D</span><i/></div>
+        <div className="brand-mark" aria-hidden="true"><BrandMark/></div>
         <div><b>DINARO<span>+</span></b><small>YOUR MONEY. YOUR FUTURE.</small></div>
         <button className="icon-btn mobile-close" type="button" aria-label="إغلاق القائمة"
           onClick={()=>setMobileMenu(false)}><X size={20}/></button>
@@ -153,6 +154,7 @@ export default function App(){
           <button type="button" className="icon-btn menu-toggle" onClick={openMenu}
             aria-label={mobileMenu?"القائمة":compact?"توسيع القائمة الجانبية":"طي القائمة الجانبية"}
             aria-expanded={mobileMenu||!compact}><Menu size={21}/></button>
+          <div className="p-header-brand" aria-label="DINARO+"><BrandMark/><span>DINARO<b>+</b></span></div>
           <div className="breadcrumb">DINARO+ <ChevronLeft size={14}/> <b>{section}</b></div>
         </div>
         <div className="topbar-actions">

@@ -34,3 +34,8 @@ Thumbs.db
 
 # Manual local development ledger database (never commit user records)
 .local-data/
+
+# Generated DINARO+ home screen icons (created by predev / prebuild)
+public/apple-touch-icon.png
+public/icon-192.png
+public/icon-512.png
