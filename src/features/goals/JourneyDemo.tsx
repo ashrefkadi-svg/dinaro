@@ -1,6 +1,7 @@
 import {useState} from "react";
 import {Castle, Check, Compass, Flag, Leaf, Mountain, Sunrise, Trees} from "lucide-react";
 import {clampProgress,getJourneyState,goalProgress,WORLD_REGIONS} from "./journey";
+import {NpcDialoguePanel} from "../world/NpcDialoguePanel";
 const demoProgress=goalProgress(12500000n,20000000n);
 const icons=[Sunrise,Trees,Leaf,Flag,Castle,Compass];
 
@@ -49,6 +50,7 @@ export function JourneyDemo(){
         </button>;
       })}
     </div>
+    <NpcDialoguePanel progress={progress}/>
     <p className="journey-disclaimer">
       عند ربط العالم لاحقًا بهدف حقيقي، ستُحسب النسبة من المبلغ المدخر والهدف فقط. القصة لا تغير المعاملات ولا تعاقب المستخدم إذا توقف عن الادخار أو سحب أمواله.
     </p>

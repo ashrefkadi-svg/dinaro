@@ -1,0 +1,58 @@
+/* The World of DINARO / NPC 1.0 — authored contextual dialogue interface. */
+.npc-panel{margin-top:23px;display:grid;gap:16px;padding:20px;
+ border:1px solid var(--ds-border);border-radius:19px;
+ background:rgba(var(--ds-surface-rgb),var(--ds-glass-opacity));color:var(--ds-text);
+ -webkit-backdrop-filter:blur(var(--ds-glass-blur));backdrop-filter:blur(var(--ds-glass-blur))}
+.npc-topline{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.npc-topline h3{font-size:20px;margin:9px 0 6px;color:var(--ds-text)}
+.npc-topline p{color:var(--ds-muted);font-size:12px;line-height:1.85;margin:0}
+.npc-eyebrow{display:flex;align-items:center;gap:8px;color:var(--ds-ice);font-size:10px;font-weight:800;letter-spacing:.5px}
+.npc-demo-tag{display:inline-flex;padding:8px 11px;border:1px solid var(--ds-border);border-radius:25px;
+ color:var(--ds-muted);font-size:10px;white-space:nowrap;background:var(--ds-elevated)}
+.npc-cast{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.npc-person{display:grid;justify-items:center;align-content:center;gap:5px;min-height:93px;padding:9px 5px;
+ border:1px solid var(--ds-border);background:var(--ds-elevated);
+ border-radius:14px;color:var(--ds-muted);transition:background .15s,border-color .15s}
+.npc-person:hover{border-color:var(--ds-ice)}
+.npc-person.active{border-color:var(--ds-emerald);background:color-mix(in srgb,var(--ds-emerald) 12%,var(--ds-surface));color:var(--ds-text)}
+.npc-symbol{height:33px;width:33px;display:grid;place-items:center;border-radius:11px;
+ background:var(--ds-surface);color:var(--ds-ice)}
+.npc-person.active .npc-symbol{color:var(--ds-emerald)}
+.npc-person strong{font-size:12px;color:inherit}
+.npc-person small{font-size:9px;color:var(--ds-muted);text-align:center;line-height:1.35}
+.npc-dialogue-head{display:flex;align-items:center;justify-content:space-between;gap:10px;
+ border-bottom:1px solid var(--ds-border);padding-bottom:12px}
+.npc-dialogue-head>div{display:grid;gap:6px}
+.npc-dialogue-head strong{font-size:15px;color:var(--ds-text)}
+.npc-dialogue-head span{font-size:11px;color:var(--ds-muted)}
+.npc-dialogue-head button{border:1px solid var(--ds-border);background:var(--ds-elevated);color:var(--ds-muted);
+ border-radius:10px;padding:9px 12px;font-size:11px;display:flex;align-items:center;gap:7px}
+.npc-chat{display:grid;align-content:end;gap:11px;min-height:185px;max-height:350px;overflow-y:auto;
+ border:1px solid var(--ds-border);border-radius:14px;padding:15px;background:color-mix(in srgb,var(--ds-canvas) 55%,var(--ds-surface))}
+.npc-bubble{width:fit-content;max-width:87%;padding:11px 14px;border-radius:14px;border:1px solid var(--ds-border);
+ background:var(--ds-elevated);line-height:1.85}
+.npc-bubble--npc{justify-self:start;border-top-right-radius:4px}
+.npc-bubble--player{justify-self:end;border-top-left-radius:4px;background:color-mix(in srgb,var(--ds-emerald) 14%,var(--ds-elevated))}
+.npc-bubble small{font-size:10px;color:var(--ds-ice);font-weight:700}
+.npc-bubble--player small{color:var(--ds-emerald)}
+.npc-bubble p{margin:5px 0 0;color:var(--ds-text);font-size:12px;line-height:1.9}
+.npc-dialogue-controls{display:grid;gap:10px}
+.npc-control-caption{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;color:var(--ds-muted)}
+.npc-control-caption svg{color:var(--ds-ice)}
+.npc-contexts,.npc-choices{display:flex;flex-wrap:wrap;gap:7px}
+.npc-contexts button{border:1px solid var(--ds-border);border-radius:22px;background:var(--ds-elevated);
+ padding:8px 12px;color:var(--ds-muted);font-size:11px}
+.npc-contexts button:hover{border-color:var(--ds-ice)}
+.npc-contexts button.active{border-color:var(--ds-emerald);color:var(--ds-emerald);
+ background:color-mix(in srgb,var(--ds-emerald) 9%,var(--ds-surface))}
+.npc-choices button{display:flex;align-items:center;gap:7px;padding:11px 13px;border-radius:11px;
+ border:1px solid color-mix(in srgb,var(--ds-emerald) 28%,var(--ds-border));
+ background:color-mix(in srgb,var(--ds-emerald) 10%,var(--ds-surface));color:var(--ds-text);font-size:11px;font-weight:700}
+.npc-choices button svg{color:var(--ds-emerald)}
+.npc-notice{color:var(--ds-muted);font-size:11px;line-height:1.8;margin:0;
+ border-top:1px solid var(--ds-border);padding-top:13px}
+@media(max-width:1050px){.npc-cast{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:570px){.npc-panel{padding:13px}.npc-topline{flex-direction:column}.npc-cast{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .npc-person{min-height:85px}.npc-chat{padding:10px}.npc-bubble{max-width:95%}
+ .npc-dialogue-head{align-items:flex-start;flex-direction:column}}
+@media(prefers-reduced-motion:reduce){.npc-person{transition:none}.npc-panel{-webkit-backdrop-filter:none;backdrop-filter:none}}
