@@ -34,7 +34,7 @@ export function NpcDialoguePanel({progress}:{progress:number}){
    setLastUsed(previous=>({...previous,[key]:reply.variant}));
    const userLine=intent?[{id:turn*2-1,from:"player" as const,name:"أنت",text:CHOICE_LABELS[intent]}]:[];
    setHistory(oldHistory=>[...oldHistory,...userLine,{
-     id:turn*2,from:"npc",name:reply.name,text:reply.text
+     id:turn*2,from:"npc" as const,name:reply.name,text:reply.text
    }].slice(-8));
    setNpc(target);
    setScene(nextScene);
