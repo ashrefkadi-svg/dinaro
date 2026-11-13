@@ -1,4 +1,4 @@
-import {useEffect,useMemo,useState} from "react";
+import {useEffect,useState} from "react";
 import type {CSSProperties,FormEvent,ReactNode} from "react";
 import {
   ArrowDownLeft,ArrowLeft,ArrowUpRight,Bell,BookOpen,
@@ -242,7 +242,6 @@ export default function MobilePreview(){
   const [sheet,setSheet]=useState(false),[notice,setNotice]=useState("");
   useEffect(()=>{if(window.matchMedia("(prefers-reduced-motion: reduce)").matches){setSplash(false);return;}
     const id=window.setTimeout(()=>setSplash(false),1800);return ()=>window.clearTimeout(id);},[]);
-  const totals=useMemo(()=>summarize(items),[items]);
   function go(next:Tab){setTab(next);window.scrollTo(0,0);}
   function add(type:DemoType,minor:bigint,title:string){
     setItems(old=>[{id:"demo-"+Date.now()+"-"+old.length,title,detail:"عملية مضافة للعرض فقط",type,category:"other",amountMinor:minor},...old]);
