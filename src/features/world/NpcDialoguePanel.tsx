@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {HelpCircle,MessageCircle,MessageSquareMore,ArrowLeft,RotateCcw} from "lucide-react";
 import {
- NPC_IDS,NPC_CAST,DIALOGUE_SCENES,CHOICE_LABELS,
+ NPC_CAST,DIALOGUE_SCENES,CHOICE_LABELS,
  chooseDialogue,sceneFromProgress
 } from "./npc-dialogues";
 import type {NpcId,DialogueScene,PlayerIntent} from "./npc-dialogues";
@@ -32,7 +32,7 @@ export function NpcDialoguePanel({progress}:{progress:number}){
  const {state,reactToDialogue,face,move}=useNpcState();
  const [region,setRegion]=useState<NpcRegion>("village");
 
- function speak(target:NpcId,nextScene:DialogueScene,intent?:PlayerIntent){
+ function speak(target:NpcId,nextScene:DialogueScene,intent?:PlayerIntent,targetRegion?:NpcRegion){
    const key=target+":"+nextScene+":"+(intent??"line");
    const old=lastUsed[key];
    const reply=chooseDialogue({npc:target,scene:nextScene,turn,lastVariant:old,choice:intent});
@@ -42,7 +42,7 @@ export function NpcDialoguePanel({progress}:{progress:number}){
      id:turn*2,from:"npc" as const,name:reply.name,text:reply.text
    }].slice(-8));
    setNpc(target);
-   setRegion(NPC_VISUALS[target].region);
+   setRegion(targetRegion??NPC_VISUALS[target].region);
    reactToDialogue(nextScene,intent);
    setScene(nextScene);
    setTurn(current=>current+1);
@@ -68,13 +68,13 @@ export function NpcDialoguePanel({progress}:{progress:number}){
       const next=e.target.value as NpcRegion;
       setRegion(next);
       const first=residentsOf(next)[0];
-      if(first)speak(first,"welcome");
+      if(first)speak(first,"welcome",undefined,next);
     }}>
      {(Object.keys(NPC_REGIONS) as NpcRegion[]).map(id=><option key={id} value={id}>{NPC_REGIONS[id].name}</option>)}
     </select>
    </div>
    <div className="npc-cast" role="group" aria-label="اختيار شخصية الحوار">
-    {NPC_IDS.map(id=>{
+    {residentsOf(region).map(id=>{
       const character=NPC_CAST[id];
       return <button key={id} type="button" className={"npc-person "+(npc===id?"active":"")}
         aria-pressed={npc===id}
