@@ -79,3 +79,14 @@
 .scenario-card-row>b{color:var(--ds-text);text-align:left}
 .scenario-warning{display:flex;align-items:center;gap:7px;color:var(--ds-danger);font-size:11px;line-height:1.8}
 @media(max-width:800px){.scenario-controls,.scenario-cards{grid-template-columns:1fr}.scenario-heading{flex-direction:column}}
+
+/* World of DINARO: atlas sprite in main journey scene with region-specific atmosphere */
+.journey-npc-walker{position:absolute;bottom:47px;z-index:3;transform:translateX(-45%);transition:left .33s ease;pointer-events:none;filter:drop-shadow(0 7px 2px #101e2155)}
+.journey-stage[data-region="village"]{background:linear-gradient(#325e8a,#8bb5c9 59%,#9bcda8 62%,#5b9474)}
+.journey-stage[data-region="forest"]{background:linear-gradient(#142e53,#466a83 59%,#529b84 62%,#275e52)}
+.journey-stage[data-region="valley"]{background:linear-gradient(#3c749e,#94bfd0 59%,#b4d3a2 62%,#528956)}
+.journey-stage[data-region="bridge"]{background:linear-gradient(#365570,#8faec0 57%,#879f9c 61%,#486b73)}
+.journey-stage[data-region="castle"]{background:linear-gradient(#2a3f65,#8791ba 59%,#a2b9a5 62%,#637b65)}
+.journey-stage[data-region="horizon"]{background:linear-gradient(#4665a1,#b1d3ed 59%,#d5e6d4 62%,#6aa5a0)}
+@media(max-width:560px){.journey-npc-walker{transform:translateX(-40%) scale(.80);transform-origin:bottom center}.journey-caption{max-width:46%}}
+@media(prefers-reduced-motion:reduce){.journey-npc-walker{transition:none}}
