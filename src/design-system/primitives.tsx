@@ -22,7 +22,8 @@ export interface DSFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string;
 }
 export function DSField({label, error, id, className = "", ...rest}: DSFieldProps) {
-  const fieldId = id || useId();
+  const generatedId = useId();
+  const fieldId = id || generatedId;
   const errorId = fieldId + "-error";
   return <div className={"ds-field " + className}>
     <label htmlFor={fieldId}>{label}</label>
