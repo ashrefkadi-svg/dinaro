@@ -31,3 +31,6 @@ Thumbs.db
 *.db
 .wrangler/
 .dev.vars
+
+# Manual local development ledger database (never commit user records)
+.local-data/
