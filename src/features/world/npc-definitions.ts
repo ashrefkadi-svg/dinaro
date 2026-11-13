@@ -44,7 +44,7 @@ export const NPC_REGIONS:Record<NpcRegion,{name:string;english:string}>={
 export function residentsOf(region:NpcRegion):NpcId[]{
  return (Object.keys(NPC_VISUALS) as NpcId[]).filter(id=>{
   const npc=NPC_VISUALS[id];return npc.region===region||npc.extraRegions.includes(region);
- });
+ }).sort((a,b)=>Number(NPC_VISUALS[b].region===region)-Number(NPC_VISUALS[a].region===region));
 }
 export function emotionFor(scene:DialogueScene,choice?:PlayerIntent):NpcEmotion{
  if(choice==="reflect"||choice==="ask")return "thinking";
