@@ -32,7 +32,7 @@ export const VILLAGE_MAP=[
 "#......===A===.........#",
 "#..=====.....=======...#",
 "#..=.....T.........=...#",
-"#..=..WWWW......S..=...#",
+"#..=..WDWW......S..=...#",
 "#..=..WWWW.........=...#",
 "#..=..WWWW....~~~..=...#",
 "#..==========.~~~..=...#",
@@ -92,7 +92,7 @@ export const QUEST_LABELS:Record<QuestStep,string>={
 export const ROOM_LABELS:Record<Room,string>={
  village:"قرية البدايات",home:"بيت المغامر",library:"مكتبة القرية",workshop:"ورشة ريمو"
 };
-const SOLIDS=new Set(["#","T","H","L","W","B","~"]);
+const SOLIDS=new Set(["#","T","H","L","W","B","~","A"]);
 export function tileAt(room:Room,{x,y}:Point):string{
  const map=MAPS[room];
  if(!Number.isSafeInteger(x)||!Number.isSafeInteger(y)||y<0||y>=map.length||x<0||x>=map[0].length)return "#";
