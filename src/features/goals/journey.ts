@@ -20,7 +20,7 @@ export function goalProgress(savedMinor:bigint,targetMinor:bigint):number{
 }
 export function getJourneyState(value:number){
   const progress=clampProgress(value);
-  const milestone=MILESTONES.filter(m=>m<=progress).at(-1)??0;
+  const milestone=MILESTONES.reduce<number>((last,m)=>m<=progress?m:last,0);
   const regionIndex=progress>=100?5:Math.floor(progress/20);
   return {
     progress,milestone,regionIndex,
