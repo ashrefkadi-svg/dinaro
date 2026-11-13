@@ -1,0 +1,24 @@
+/* The World of DINARO — shared atlas styling in BOTH web and mobile previews.
+   Four exact sprite frames per cycle. Portraits include a separate closed-eye row. */
+.npc-art{
+ display:inline-block;flex:none;vertical-align:middle;position:relative;
+ background-repeat:no-repeat;image-rendering:pixelated;image-rendering:crisp-edges;
+ transform:translateZ(0);
+}
+.npc-art--animated{animation:npc-atlas-frames .86s steps(4,end) infinite}
+.npc-art--animated[data-motion="idle"]{animation-duration:2.2s}
+.npc-art--animated[data-motion="walk"]{animation-duration:.48s}
+.npc-art--animated[data-motion="talk"]{animation-duration:.68s}
+.npc-art--animated[data-motion="celebrate"]{animation-duration:.76s}
+.npc-art--portrait-sheet{animation:npc-portrait-blink 5.6s steps(1,end) infinite}
+@keyframes npc-atlas-frames{
+ from{background-position-x:0}
+ to{background-position-x:var(--npc-travel)}
+}
+@keyframes npc-portrait-blink{
+ 0%,92%,98%,100%{background-position-y:0}
+ 94%,96%{background-position-y:var(--npc-blink-offset)}
+}
+@media(prefers-reduced-motion:reduce){
+ .npc-art--animated,.npc-art--portrait-sheet{animation:none!important}
+}
