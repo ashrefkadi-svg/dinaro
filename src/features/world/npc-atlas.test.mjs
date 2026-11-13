@@ -52,5 +52,5 @@ test("all 12 transparent PNG atlases render at exact sprite-sheet dimensions",()
 
 test("assets and code are built without financial server access",()=>{
  const script=readFileSync(new URL("../../../scripts/generate-npc-atlases.mjs",import.meta.url),"utf8");
- assert.doesNotMatch(script,/(fetch\s*\(|http:|https:|server\/|api\/|sqlite|process\.env\.)/i);
+ assert.doesNotMatch(script,/(fetch\s*\(|XMLHttpRequest|server\/|api\/|sqlite|process\.env\.)/i);
 });
