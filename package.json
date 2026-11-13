@@ -14,11 +14,12 @@
     "predev": "node scripts/generate-brand-icons.mjs && node scripts/generate-npc-atlases.mjs",
     "prebuild": "node scripts/generate-brand-icons.mjs && node scripts/generate-npc-atlases.mjs",
     "test:brand": "node --test src/ui/brand/brand.test.mjs",
-    "build:mobile": "node scripts/generate-brand-icons.mjs && vite build --config vite.mobile-preview.config.ts && node scripts/finalize-mobile-preview.mjs",
-    "test:mobile": "node --experimental-strip-types --test src/mobile-preview/data.test.mjs",
+    "build:mobile": "node scripts/generate-brand-icons.mjs && node scripts/generate-npc-atlases.mjs && vite build --config vite.mobile-preview.config.ts && node scripts/finalize-mobile-preview.mjs",
+    "test:mobile": "node scripts/generate-npc-atlases.mjs && node --experimental-strip-types --test src/mobile-preview/data.test.mjs src/mobile-preview/world-mobile.test.mjs",
     "dev:mobile": "vite --open /mobile-preview.html",
     "pretest": "node scripts/generate-npc-atlases.mjs",
-    "test:npc-art": "node scripts/generate-npc-atlases.mjs && node --experimental-strip-types --test src/features/world/npc-atlas.test.mjs"
+    "test:npc-art": "node scripts/generate-npc-atlases.mjs && node --experimental-strip-types --test src/features/world/npc-atlas.test.mjs",
+    "predev:mobile": "node scripts/generate-brand-icons.mjs && node scripts/generate-npc-atlases.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

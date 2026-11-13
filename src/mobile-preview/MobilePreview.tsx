@@ -2,13 +2,14 @@ import {useEffect,useState} from "react";
 import type {CSSProperties,FormEvent,ReactNode} from "react";
 import {
   ArrowDownLeft,ArrowLeft,ArrowUpRight,Bell,BookOpen,
-  ChartNoAxesCombined,Check,ChevronLeft,Compass,Eye,EyeOff,
+  ChartNoAxesCombined,Check,ChevronLeft,Eye,EyeOff,
   GraduationCap,House,Moon,Plus,ShieldCheck,Sparkles,Sun,
   Target,Wallet,X,SlidersHorizontal,CircleHelp,
   CheckCircle2,Lightbulb,TrendingUp,LockKeyhole
 } from "lucide-react";
 import {INITIAL_TRANSACTIONS,formatDzd,readWholeDzd,summarize,cumulativePoints} from "./data";
 import type {DemoTransaction,DemoType} from "./data";
+import MobileWorld from "./MobileWorld";
 
 type Tab="home"|"analytics"|"goals"|"academy"|"profile";
 const mark=import.meta.env.BASE_URL+"brand/dinaro-mark.svg";
@@ -135,28 +136,7 @@ function Analytics({items,hidden}:{items:readonly DemoTransaction[];hidden:boole
     <Panel><Transactions items={items} hidden={hidden}/></Panel>
   </div>;
 }
-function Goals(){
-  const [progress,setProgress]=useState(62.5);
-  const phase=progress>=100?"أفق المستقبل":progress>=75?"قلعة الإنجاز":progress>=50?"جسر التقدم":progress>=25?"وادي الادخار":"قرية البداية";
-  return <div className="m-page m-enter"><div className="m-intro"><span>THE WORLD OF DINARO</span>
-    <h1>رحلة أهدافك</h1><p>عالم Pixel Art اختياري مرتبط بالتقدم التخيلي هنا.</p></div>
-    <Panel className="m-goal-page"><div className="m-goal-page-title"><span><Target size={19}/> حلم جديد</span><b>{progress.toFixed(1)}%</b></div>
-      <div className="m-pixel" role="img" aria-label={"مشهد القصة: "+phase}>
-        <span className="m-pixel-sun"/><i className="m-pixel-hills"/><i className="m-pixel-ground"/>
-        <span className="m-pixel-tree"/><span className="m-pixel-house"/>
-        <span className="m-pixel-hero" style={{insetInlineStart:String(Math.min(83,9+progress*.7))+"%"}}/>
-        <b>{phase}</b></div>
-      <div className="m-goal-progress"><span>تقدم هدف افتراضي</span><strong>{progress.toFixed(1)}%</strong></div>
-      <span className="m-track"><i style={{width:progress+"%"}}/></span>
-      <label htmlFor="m-goal-slider">جرّب تحريك الشخصية</label>
-      <input id="m-goal-slider" type="range" min="0" max="100" step="5" value={progress} onChange={e=>setProgress(Number(e.target.value))}/>
-      <div className="m-steps">{[0,25,50,75,100].map(v=><button type="button" className={progress>=v?"active":""} key={v} onClick={()=>setProgress(v)}>{v}%</button>)}</div>
-    </Panel>
-    <div className="m-stat-grid"><Panel className="m-goal-small"><Compass size={21}/><strong>6 مناطق</strong><span>عالم متطور</span></Panel>
-      <Panel className="m-goal-small"><ShieldCheck size={21}/><strong>بدون عقوبات</strong><span>تقدم بالوتيرة التي تناسبك</span></Panel></div>
-    <div className="m-foot-tip"><CircleHelp size={19}/> محاكاة مستقلة لا تغيّر الرصيد ولا تنفذ معاملات مالية.</div>
-  </div>;
-}
+function Goals(){return <MobileWorld/>;}
 function Academy(){
   const [index,setIndex]=useState(0),[answer,setAnswer]=useState<number|null>(null),[checked,setChecked]=useState(false);
   const q=questions[index],correct=answer===q.answer;
