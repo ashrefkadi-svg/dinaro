@@ -1,14 +1,17 @@
 import {useState} from "react";
-import {BookOpen,Compass,HelpCircle,MessageCircle,MessageSquareMore,
-  Puzzle,Sparkles,Sprout,Telescope,ArrowLeft,RotateCcw} from "lucide-react";
+import {HelpCircle,MessageCircle,MessageSquareMore,ArrowLeft,RotateCcw} from "lucide-react";
 import {
- NPC_IDS,NPC_CAST,DIALOGUE_SCENES,CHOICE_LABELS,
+ NPC_CAST,DIALOGUE_SCENES,CHOICE_LABELS,
  chooseDialogue,sceneFromProgress
 } from "./npc-dialogues";
 import type {NpcId,DialogueScene,PlayerIntent} from "./npc-dialogues";
 import "./npc.css";
+import {NpcCharacter} from "./NpcCharacter";
+import {NpcDialogueBubble} from "./NpcDialogueBubble";
+import {NPC_VISUALS,NPC_REGIONS,residentsOf} from "./npc-definitions";
+import type {NpcRegion,NpcFacing,NpcMotion} from "./npc-definitions";
+import {useNpcState} from "./useNpcState";
 
-const icons={ashraf:Compass,layla:Sparkles,rimo:Sprout,salim:Puzzle,professor:BookOpen,mira:Telescope};
 const sceneLabels:Record<DialogueScene,string>={
  welcome:"أول لقاء",early:"بداية الهدف",growing:"تقدم في الرحلة",
  milestone:"معْلم جديد",slowdown:"أحتاج راحة",setback:"تغيّرت أولوياتي",
@@ -26,8 +29,10 @@ export function NpcDialoguePanel({progress}:{progress:number}){
    id:0,from:"npc",name:greeting.name,text:greeting.text
  }]);
  const profile=NPC_CAST[npc];
+ const {state,reactToDialogue,face,move}=useNpcState();
+ const [region,setRegion]=useState<NpcRegion>("village");
 
- function speak(target:NpcId,nextScene:DialogueScene,intent?:PlayerIntent){
+ function speak(target:NpcId,nextScene:DialogueScene,intent?:PlayerIntent,targetRegion?:NpcRegion){
    const key=target+":"+nextScene+":"+(intent??"line");
    const old=lastUsed[key];
    const reply=chooseDialogue({npc:target,scene:nextScene,turn,lastVariant:old,choice:intent});
@@ -37,12 +42,15 @@ export function NpcDialoguePanel({progress}:{progress:number}){
      id:turn*2,from:"npc" as const,name:reply.name,text:reply.text
    }].slice(-8));
    setNpc(target);
+   setRegion(targetRegion??NPC_VISUALS[target].region);
+   reactToDialogue(nextScene,intent);
    setScene(nextScene);
    setTurn(current=>current+1);
  }
  function restart(){
    const next=chooseDialogue({npc,scene:"welcome",turn,lastVariant:lastUsed[npc+":welcome:line"]});
    setScene("welcome");
+   move("idle");
    setLastUsed(prev=>({...prev,[npc+":welcome:line"]:next.variant}));
    setHistory([{id:turn*2,from:"npc",name:next.name,text:next.text}]);
    setTurn(current=>current+1);
@@ -55,17 +63,39 @@ export function NpcDialoguePanel({progress}:{progress:number}){
        <p>كل شخصية تتكلم بطريقتها، وتتغير صياغة الرد حسب الموقف واختيارك.</p></div>
      <span className="npc-demo-tag">حوار قصصي تجريبي</span>
    </div>
+   <div className="npc-region-picker"><span>مناطق المملكة والجزر السرية</span>
+    <select value={region} aria-label="اختر المنطقة" onChange={e=>{
+      const next=e.target.value as NpcRegion;
+      setRegion(next);
+      const first=residentsOf(next)[0];
+      if(first)speak(first,"welcome",undefined,next);
+    }}>
+     {(Object.keys(NPC_REGIONS) as NpcRegion[]).map(id=><option key={id} value={id}>{NPC_REGIONS[id].name}</option>)}
+    </select>
+   </div>
    <div className="npc-cast" role="group" aria-label="اختيار شخصية الحوار">
-    {NPC_IDS.map(id=>{
-      const character=NPC_CAST[id],Icon=icons[id];
+    {residentsOf(region).map(id=>{
+      const character=NPC_CAST[id];
       return <button key={id} type="button" className={"npc-person "+(npc===id?"active":"")}
         aria-pressed={npc===id}
         onClick={()=>speak(id,"welcome")} title={character.voice}>
-        <span className="npc-symbol"><Icon size={21} strokeWidth={1.8}/></span>
+        <span className="npc-symbol"><NpcCharacter id={id} size="thumb" motion="idle" name={character.name}/></span>
         <strong>{character.name}</strong><small>{character.role}</small>
       </button>;
     })}
    </div>
+   <div className="npc-stage" aria-label="معاينة حركة الشخصية">
+     <div className="npc-stage-art"><NpcCharacter id={npc} size="scene" emotion={state.emotion} motion={state.motion} facing={state.facing} name={profile.name}/></div>
+     <div className="npc-stage-meta"><strong>{profile.name}</strong><small>{NPC_REGIONS[region].name} · نموذج Pixel RPG قابل للتحريك</small>
+       <div className="npc-anim-controls">
+         {(["idle","walk","talk","celebrate"] as NpcMotion[]).map(value=><button type="button" key={value} aria-pressed={state.motion===value} onClick={()=>move(value)}>{({idle:"وقوف",walk:"مشي",talk:"حديث",celebrate:"احتفال"} as const)[value]}</button>)}
+       </div>
+       <div className="npc-anim-controls">
+         {(["front","back","left","right"] as NpcFacing[]).map(value=><button type="button" key={value} aria-pressed={state.facing===value} onClick={()=>face(value)}>{({front:"أمام",back:"خلف",left:"يسار",right:"يمين"} as const)[value]}</button>)}
+       </div>
+     </div>
+   </div>
+   <NpcDialogueBubble id={npc} name={profile.name} emotion={state.emotion} motion={state.motion}>{recent[recent.length-1]?.text}</NpcDialogueBubble>
    <div className="npc-dialogue-head">
      <div><strong>{profile.name}</strong><span>{profile.role} · {profile.voice}</span></div>
      <button type="button" onClick={restart}><RotateCcw size={16}/> بداية جديدة</button>
