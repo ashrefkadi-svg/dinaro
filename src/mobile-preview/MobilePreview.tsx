@@ -1,10 +1,10 @@
 import {useEffect,useMemo,useState} from "react";
 import type {CSSProperties,FormEvent,ReactNode} from "react";
 import {
-  ArrowDownLeft,ArrowLeft,ArrowLeftRight,ArrowUpRight,Bell,BookOpen,
+  ArrowDownLeft,ArrowLeft,ArrowUpRight,Bell,BookOpen,
   ChartNoAxesCombined,Check,ChevronLeft,Compass,Eye,EyeOff,
   GraduationCap,House,Moon,Plus,ShieldCheck,Sparkles,Sun,
-  Target,Wallet,UserRound,X,SlidersHorizontal,CircleHelp,
+  Target,Wallet,X,SlidersHorizontal,CircleHelp,
   CheckCircle2,Lightbulb,TrendingUp,LockKeyhole
 } from "lucide-react";
 import {INITIAL_TRANSACTIONS,formatDzd,readWholeDzd,summarize,cumulativePoints} from "./data";
