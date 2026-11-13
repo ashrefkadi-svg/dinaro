@@ -1,21 +1,30 @@
 import { useMemo, useState } from "react";
+import { buildOpeningEntry, buildTransactionEntry, ledgerBalance, parseDzdMinor } from "./domain/ledger";
+import { AcademyDemo } from "./features/academy/AcademyDemo";
+import { JourneyDemo } from "./features/goals/JourneyDemo";
+import { ScenarioDemo } from "./features/planning/ScenarioDemo";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Activity, ArrowDownLeft, ArrowLeftRight, ArrowUpLeft, Bell, ChevronDown,
-  ChevronLeft, CircleHelp, CreditCard, Ellipsis, Eye, EyeOff, FileText,
-  Home, LayoutGrid, LogOut, Menu, Plus, Search, Settings, ShieldCheck,
-  Sparkles, Target, TrendingDown, TrendingUp, Wallet, X, Zap
+  ChevronLeft, CircleHelp, Ellipsis, Eye, EyeOff, FileText,
+  Home, LayoutGrid, Menu, Plus, Search, Settings, ShieldCheck,
+  BookOpen, Calculator, Gamepad2, Sparkles, Target, TrendingDown, TrendingUp, Wallet, X, Zap
 } from "lucide-react";
 import {
   Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis
 } from "recharts";
 
-type Section = "الرئيسية" | "المعاملات" | "الحسابات" | "الميزانية" | "الأهداف";
+type CoreSection = "الرئيسية" | "المعاملات" | "الحسابات" | "الميزانية" | "الأهداف";
+type Section = CoreSection | "الأكاديمية" | "عالم دينارو" | "المحاكاة";
 const nav: { label: Section; icon: typeof Home }[] = [
   { label: "الرئيسية", icon: Home }, { label: "المعاملات", icon: ArrowLeftRight },
   { label: "الحسابات", icon: Wallet }, { label: "الميزانية", icon: LayoutGrid },
-  { label: "الأهداف", icon: Target }
+  { label: "الأهداف", icon: Target },
+  { label: "الأكاديمية", icon: BookOpen },
+  { label: "عالم دينارو", icon: Gamepad2 },
+  { label: "المحاكاة", icon: Calculator }
 ];
+// All figures below are synthetic demonstration fixtures, not real bank records.
 const chartData = [
   { day: "01", income: 180000, expense: 90000 }, { day: "05", income: 205000, expense: 112000 },
   { day: "09", income: 195000, expense: 104000 }, { day: "13", income: 248000, expense: 132000 },
@@ -35,6 +44,7 @@ function App() {
   const [balanceVisible, setBalanceVisible] = useState(true);
   const [transactions, setTransactions] = useState(initialTransactions);
   const [showAdd, setShowAdd] = useState(false);
+  const [search, setSearch] = useState("");
   const [mobileMenu, setMobileMenu] = useState(false);
   const [toast, setToast] = useState("");
   const [form, setForm] = useState({ title: "", amount: "", type: "expense" });
@@ -42,12 +52,32 @@ function App() {
     income: transactions.filter(t => t.type === "income").reduce((s, t) => s + t.amount, 0),
     expense: transactions.filter(t => t.type === "expense").reduce((s, t) => s + t.amount, 0)
   }), [transactions]);
-  const balance = 284500 + totals.income - 97000 - totals.expense;
+  // Balanced synthetic ledger: never an authoritative account statement.
+  const balanceMinor = useMemo(() => ledgerBalance([
+    buildOpeningEntry("demo-opening", "demo:wallet", 18750000n),
+    ...transactions.map(t => buildTransactionEntry({
+      id: String(t.id),
+      accountId: "demo:wallet",
+      type: t.type === "income" ? "income" : "expense",
+      amountMinor: BigInt(t.amount) * 100n
+    }))
+  ], "demo:wallet"), [transactions]);
+  const balance = Number(balanceMinor / 100n);
+  const filteredTransactions = transactions.filter(t => (t.title+" "+t.category).toLocaleLowerCase("ar").includes(search.trim().toLocaleLowerCase("ar")));
   const notify = (message: string) => { setToast(message); window.setTimeout(() => setToast(""), 2600); };
   const addTransaction = (e: React.FormEvent) => {
     e.preventDefault();
-    const amount = Number(form.amount);
-    if (!form.title.trim() || !amount || amount < 1) return;
+    let amountMinor: bigint;
+    try {
+      // Whole dinars only in this prototype; the domain supports centimes.
+      if (!/^[1-9][0-9]{0,10}$/.test(form.amount.trim())) throw new RangeError("Invalid whole dinar amount");
+      amountMinor = parseDzdMinor(form.amount.trim());
+    } catch {
+      notify("أدخل مبلغًا موجبًا وصحيحًا بالدينار الجزائري");
+      return;
+    }
+    if (!form.title.trim()) return;
+    const amount = Number(amountMinor / 100n);
     setTransactions([{ id: Date.now(), title: form.title, category: "عام", date: "الآن", amount, type: form.type, icon: form.type === "income" ? ArrowDownLeft : ArrowUpLeft, color: form.type === "income" ? "green" : "orange" }, ...transactions]);
     setForm({ title: "", amount: "", type: "expense" }); setShowAdd(false); notify("تمت إضافة المعاملة إلى العرض التجريبي");
   };
@@ -58,7 +88,7 @@ function App() {
         <div className="brand"><div className="brand-mark"><span>D</span><i /></div><div><b>DINARO<span>+</span></b><small>YOUR MONEY. YOUR FUTURE.</small></div><button className="icon-btn mobile-close" onClick={() => setMobileMenu(false)}><X size={18}/></button></div>
         <div className="workspace"><div className="workspace-avatar">A</div><div><b>مساحتي الشخصية</b><small>الحساب الشخصي</small></div><ChevronDown size={15}/></div>
         <div className="nav-caption">القائمة الرئيسية</div>
-        <nav className="side-nav">{nav.map(item => <button key={item.label} className={section === item.label ? "nav-item active" : "nav-item"} onClick={() => {setSection(item.label);setMobileMenu(false);}}><item.icon size={19}/><span>{item.label}</span>{item.label === "المعاملات" && <small className="nav-count">4</small>}</button>)}</nav>
+        <nav className="side-nav">{nav.map(item => <button key={item.label} className={section === item.label ? "nav-item active" : "nav-item"} onClick={() => {setSection(item.label);setMobileMenu(false);}}><item.icon size={19}/><span>{item.label}</span>{item.label === "المعاملات" && <small className="nav-count">{transactions.length}</small>}</button>)}</nav>
         <div className="nav-caption tools-caption">أدواتك المالية</div>
         <button className="nav-item" onClick={() => notify("ميزة DINARO Scan ستضاف في مرحلة لاحقة")}><FileText size={19}/><span>DINARO Scan</span><span className="new-tag">جديد</span></button>
         <div className="sidebar-spacer"/>
@@ -70,29 +100,49 @@ function App() {
       <main className="main-area">
         <header className="topbar">
           <div className="topbar-start"><button className="icon-btn menu-toggle" onClick={() => setMobileMenu(true)}><Menu size={20}/></button><div className="breadcrumb">مساحتي <ChevronLeft size={14}/> <b>{section}</b></div></div>
-          <div className="topbar-actions"><div className="search-box"><Search size={17}/><input placeholder="ابحث عن معاملة أو حساب..." /></div><button className="icon-btn notification-btn" onClick={() => notify("لا توجد إشعارات جديدة")}><Bell size={19}/><i/></button><div className="top-avatar">AK</div></div>
+          <div className="topbar-actions"><div className="search-box"><Search size={17}/><input aria-label="بحث في المعاملات التجريبية" value={search}
+  onChange={e => {setSearch(e.target.value);if(e.target.value) setSection("المعاملات");}}
+  placeholder="ابحث في المعاملات..." /></div><button className="icon-btn notification-btn" aria-label="الإشعارات" onClick={() => notify("لا توجد إشعارات جديدة")}><Bell size={19}/><i/></button><div className="top-avatar">AK</div></div>
         </header>
         <div className="page-content">
+          <div className="ds-demo-notice" role="status"><CircleHelp size={18} aria-hidden="true"/><span><strong>وضع العرض التجريبي</strong> — الأرصدة والمعاملات والرسوم البيانية أمثلة غير مرتبطة بحساب مصرفي حقيقي، والإضافات لا تُحفظ بعد إغلاق الصفحة.</span></div>
           <div className="welcome-row"><div><div className="eyebrow"><span className="live-dot"/> مساحتك المالية في مكان واحد</div><h1>{section === "الرئيسية" ? "صباح الخير، أشرف" : section}</h1><p>إليك نظرة واضحة على وضعك المالي. خطوة صغيرة اليوم تصنع فرقاً غداً.</p></div><div className="welcome-actions"><button className="secondary-btn" onClick={() => notify("تم تحديث بيانات العرض") }><Activity size={16}/> تحديث البيانات</button><button className="primary-btn" onClick={() => setShowAdd(true)}><Plus size={17}/> إضافة معاملة</button></div></div>
           {section === "الرئيسية" ? <>
             <section className="overview-grid">
               <motion.div className="balance-card" initial={{opacity:0,y:12}} animate={{opacity:1,y:0}}>
-                <div className="balance-glow"/><div className="balance-top"><span>إجمالي رصيدك</span><button onClick={() => setBalanceVisible(!balanceVisible)}>{balanceVisible ? <Eye size={17}/> : <EyeOff size={17}/>}</button><span className="balance-period">كل الحسابات <ChevronDown size={13}/></span></div>
+                <div className="balance-glow"/><div className="balance-top"><span>إجمالي رصيدك التجريبي</span><button type="button" aria-label={balanceVisible ? "إخفاء الرصيد التجريبي" : "إظهار الرصيد التجريبي"} onClick={() => setBalanceVisible(!balanceVisible)}>{balanceVisible ? <Eye size={17}/> : <EyeOff size={17}/>}</button><span className="balance-period">كل الحسابات <ChevronDown size={13}/></span></div>
                 <div className="balance-value">{balanceVisible ? money(balance) : "••••••••"} <small>دج</small></div>
-                <div className="balance-change"><span><TrendingUp size={14}/> +8.4%</span><small>مقارنة بالشهر الماضي</small></div>
-                <div className="balance-footer"><div><small>آخر تحديث</small><b>اليوم، الآن</b></div><div className="balance-chip"><ShieldCheck size={14}/> بياناتك تحت سيطرتك</div></div>
+                <div className="balance-change"><span><ShieldCheck size={14}/> بيانات تجريبية</span><small>محسوبة من سجل الجلسة فقط</small></div>
+                <div className="balance-footer"><div><small>آخر تحديث</small><b>بيانات عرض</b></div><div className="balance-chip"><ShieldCheck size={14}/> بياناتك تحت سيطرتك</div></div>
               </motion.div>
-              <div className="stat-card"><div className="stat-heading"><span className="stat-icon income-icon"><ArrowDownLeft size={18}/></span><span>إجمالي الدخل</span><Ellipsis size={18}/></div><strong>{money(totals.income + 97000)} <small>دج</small></strong><div className="stat-foot positive"><TrendingUp size={14}/> <b>12.8%</b><span>عن الشهر الماضي</span></div><div className="mini-bars income-bars"><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/></div></div>
-              <div className="stat-card"><div className="stat-heading"><span className="stat-icon expense-icon"><ArrowUpLeft size={18}/></span><span>إجمالي المصروفات</span><Ellipsis size={18}/></div><strong>{money(totals.expense + 97000)} <small>دج</small></strong><div className="stat-foot negative"><TrendingDown size={14}/> <b>4.2%</b><span>عن الشهر الماضي</span></div><div className="mini-bars expense-bars"><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/></div></div>
+              <div className="stat-card"><div className="stat-heading"><span className="stat-icon income-icon"><ArrowDownLeft size={18}/></span><span>إجمالي الدخل</span><Ellipsis size={18}/></div><strong>{money(totals.income)} <small>دج</small></strong><div className="stat-foot positive"><TrendingUp size={14}/> <b>{transactions.filter(t => t.type === "income").length}</b><span>معاملات دخل تجريبية</span></div><div className="mini-bars income-bars"><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/></div></div>
+              <div className="stat-card"><div className="stat-heading"><span className="stat-icon expense-icon"><ArrowUpLeft size={18}/></span><span>إجمالي المصروفات</span><Ellipsis size={18}/></div><strong>{money(totals.expense)} <small>دج</small></strong><div className="stat-foot negative"><TrendingDown size={14}/> <b>{transactions.filter(t => t.type === "expense").length}</b><span>معاملات صرف تجريبية</span></div><div className="mini-bars expense-bars"><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/></div></div>
             </section>
             <section className="content-grid">
-              <div className="panel chart-panel"><div className="panel-heading"><div><h3>نظرة على التدفق المالي</h3><p>تابع حركة دخلك ومصروفاتك بوضوح</p></div><button className="select-chip">هذا الشهر <ChevronDown size={14}/></button></div><div className="chart-legend"><span><i className="legend-income"/> الدخل</span><span><i className="legend-expense"/> المصروفات</span></div><div className="chart-wrap"><ResponsiveContainer width="100%" height="100%"><AreaChart data={chartData} margin={{top:10,right:4,left:0,bottom:0}}><defs><linearGradient id="incomeFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#20c997" stopOpacity={0.22}/><stop offset="95%" stopColor="#20c997" stopOpacity={0}/></linearGradient><linearGradient id="expenseFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#e6a35c" stopOpacity={0.16}/><stop offset="95%" stopColor="#e6a35c" stopOpacity={0}/></linearGradient></defs><CartesianGrid stroke="#ffffff0b" vertical={false}/><XAxis dataKey="day" tickLine={false} axisLine={false} tick={{fill:"#778a83",fontSize:11}}/><YAxis orientation="right" tickLine={false} axisLine={false} tick={{fill:"#778a83",fontSize:10}} tickFormatter={v => `${v/1000}k`} width={37}/><Tooltip contentStyle={{background:"#10231e",border:"1px solid #29463b",borderRadius:12,color:"#fff",fontFamily:"inherit"}} formatter={(v) => [money(Number(v))+" دج"]}/><Area type="monotone" dataKey="income" stroke="#24c99a" strokeWidth={2.5} fill="url(#incomeFill)"/><Area type="monotone" dataKey="expense" stroke="#d99b5c" strokeWidth={2.2} fill="url(#expenseFill)"/></AreaChart></ResponsiveContainer></div></div>
+              <div className="panel chart-panel"><div className="panel-heading"><div><h3>نظرة على التدفق المالي</h3><p>تابع حركة دخلك ومصروفاتك بوضوح</p></div><button className="select-chip">هذا الشهر <ChevronDown size={14}/></button></div><div className="chart-legend"><span><i className="legend-income"/> الدخل</span><span><i className="legend-expense"/> المصروفات</span></div><div className="chart-wrap"><ResponsiveContainer width="100%" height="100%"><AreaChart data={chartData} margin={{top:10,right:4,left:0,bottom:0}}><defs><linearGradient id="incomeFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="var(--ds-emerald)" stopOpacity={0.22}/><stop offset="95%" stopColor="var(--ds-emerald)" stopOpacity={0}/></linearGradient><linearGradient id="expenseFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="var(--ds-ice)" stopOpacity={0.16}/><stop offset="95%" stopColor="var(--ds-ice)" stopOpacity={0}/></linearGradient></defs><CartesianGrid stroke="var(--ds-border)" vertical={false}/><XAxis dataKey="day" tickLine={false} axisLine={false} tick={{fill:"var(--ds-muted)",fontSize:11}}/><YAxis orientation="right" tickLine={false} axisLine={false} tick={{fill:"var(--ds-muted)",fontSize:10}} tickFormatter={v => `${v/1000}k`} width={37}/><Tooltip contentStyle={{background:"#10231e",border:"1px solid #29463b",borderRadius:12,color:"#fff",fontFamily:"inherit"}} formatter={(v) => [money(Number(v))+" دج"]}/><Area type="monotone" dataKey="income" stroke="var(--ds-emerald)" strokeWidth={2.5} fill="url(#incomeFill)"/><Area type="monotone" dataKey="expense" stroke="var(--ds-ice)" strokeWidth={2.2} fill="url(#expenseFill)"/></AreaChart></ResponsiveContainer></div></div>
               <div className="panel budget-panel"><div className="panel-heading"><div><h3>الميزانية الشهرية</h3><p>راقب حدود إنفاقك</p></div><button className="more-btn" onClick={() => setSection("الميزانية")}><Ellipsis/></button></div><div className="budget-total"><strong>42,350 <small>دج</small></strong><span>من 70,000 دج</span></div><div className="budget-track"><i style={{width:"60.5%"}}/></div><div className="budget-meta"><span>60.5% مستخدم</span><b>متبقي 27,650 دج</b></div><div className="budget-divider"/><div className="budget-categories"><div><span className="category-dot food"/> <span>الطعام والتسوق</span><b>18,500 دج</b></div><div><span className="category-dot bills"/> <span>الفواتير</span><b>12,250 دج</b></div><div><span className="category-dot transport"/> <span>النقل</span><b>6,600 دج</b></div><div><span className="category-dot other"/> <span>أخرى</span><b>5,000 دج</b></div></div></div>
             </section>
             <section className="panel transactions-panel"><div className="panel-heading"><div><h3>أحدث المعاملات</h3><p>كل حركة مالية مسجلة في مكان واحد</p></div><button className="text-link" onClick={() => setSection("المعاملات")}>عرض الكل <ChevronLeft size={15}/></button></div><div className="transaction-list">{transactions.slice(0,4).map(t => <div className="transaction-row" key={t.id}><div className={`transaction-icon ${t.color}`}><t.icon size={18}/></div><div className="transaction-info"><b>{t.title}</b><small>{t.category} · {t.date}</small></div><div className={t.type === "income" ? "amount positive-amount" : "amount"}>{t.type === "income" ? "+" : "−"}{money(t.amount)} <small>دج</small></div><span className={t.type === "income" ? "status-pill received" : "status-pill paid"}>{t.type === "income" ? "وارد" : "صادر"}</span></div>)}</div></section>
-            <section className="bottom-grid"><div className="panel goal-card"><div className="panel-heading"><div><h3>هدفك القادم</h3><p>كل خطوة تقربك من هدفك</p></div><Target size={19} className="muted-icon"/></div><div className="goal-main"><div className="goal-symbol"><Target size={23}/></div><div><b>شراء حاسوب جديد</b><small>هدف شخصي · 30 سبتمبر 2026</small></div></div><div className="goal-progress"><div><span>تم توفير 125,000 دج</span><b>62.5%</b></div><div className="goal-track"><i/></div><small>المتبقي 75,000 دج للوصول إلى هدفك</small></div></div><div className="insight-card"><div className="insight-icon"><Sparkles size={19}/></div><div><span>معلومة مالية</span><b>الاستمرارية أهم من المبلغ</b><p>تتبع مصروفاتك بانتظام يساعدك على فهم عاداتك المالية واتخاذ قرارات أفضل.</p></div><CircleHelp size={17} className="insight-help"/></div></section>
-          </> : <SectionView section={section} transactions={transactions} onAdd={() => setShowAdd(true)} />}
-          <footer className="footer"><span>© 2026 DINARO+ · أموالك. مستقبلك.</span><span><ShieldCheck size={13}/> الخصوصية أولاً</span><span>الإصدار التجريبي 0.1</span></footer>
+            <section className="bottom-grid"><div className="panel goal-card"><div className="panel-heading"><div><h3>هدفك القادم</h3><p>كل خطوة تقربك من هدفك</p></div><Target size={19} className="muted-icon"/></div><div className="goal-main"><div className="goal-symbol"><Target size={23}/></div><div><b>شراء حاسوب جديد</b><small>هدف تجريبي · موعد غير محدد</small></div></div><div className="goal-progress"><div><span>تم توفير 125,000 دج</span><b>62.5%</b></div><div className="goal-track"><i/></div><small>المتبقي 75,000 دج للوصول إلى هدفك</small></div></div><div className="insight-card"><div className="insight-icon"><Sparkles size={19}/></div><div><span>معلومة مالية</span><b>الاستمرارية أهم من المبلغ</b><p>تتبع مصروفاتك بانتظام يساعدك على فهم عاداتك المالية واتخاذ قرارات أفضل.</p></div><CircleHelp size={17} className="insight-help"/></div></section>
+            <section className="ds-dashboard-extras" aria-label="استكشف ميزات DINARO">
+              <button className="ds-explore-card" onClick={() => setSection("عالم دينارو")}>
+                <span className="ds-explore-icon"><Gamepad2 size={24}/></span>
+                <span><strong>THE WORLD OF DINARO</strong><small>رحلة تفاعلية للهدف المالي في عالم Pixel Art</small></span>
+                <ChevronLeft size={19}/>
+              </button>
+              <button className="ds-explore-card" onClick={() => setSection("الأكاديمية")}>
+                <span className="ds-explore-icon"><BookOpen size={24}/></span>
+                <span><strong>DINARO Academy</strong><small>ألغاز مالية مترابطة ومختبر تعليمي تجريبي</small></span>
+                <ChevronLeft size={19}/>
+              </button>
+              <button className="ds-explore-card" onClick={() => setSection("المحاكاة")}>
+                <span className="ds-explore-icon"><Calculator size={24}/></span>
+                <span><strong>ماذا لو؟</strong><small>استكشف توقعات افتراضية بعد 3 و6 و12 شهرًا</small></span>
+                <ChevronLeft size={19}/>
+              </button>
+            </section>
+          </> : section === "الأكاديمية" ? <AcademyDemo/> : section === "عالم دينارو" ? <JourneyDemo/> : section === "المحاكاة" ? <ScenarioDemo/> : <SectionView section={section as CoreSection} transactions={filteredTransactions} search={search} balance={balance} onAdd={() => setShowAdd(true)} />}
+          <footer className="footer"><span>© 2026 DINARO+ · أموالك. مستقبلك.</span><span><ShieldCheck size={13}/> الخصوصية أولاً</span><span>الإصدار التجريبي 0.2</span></footer>
         </div>
       </main>
       <AnimatePresence>{showAdd && <motion.div className="modal-backdrop" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} onClick={() => setShowAdd(false)}><motion.form className="add-modal" initial={{y:20,opacity:0}} animate={{y:0,opacity:1}} exit={{y:20,opacity:0}} onSubmit={addTransaction} onClick={e => e.stopPropagation()}><div className="modal-heading"><div><span className="eyebrow">إدارة أموالك</span><h2>إضافة معاملة</h2></div><button type="button" className="icon-btn" onClick={() => setShowAdd(false)}><X size={19}/></button></div><label>نوع المعاملة</label><div className="type-switch"><button type="button" className={form.type === "expense" ? "chosen expense-choice" : ""} onClick={() => setForm({...form,type:"expense"})}>مصروف</button><button type="button" className={form.type === "income" ? "chosen income-choice" : ""} onClick={() => setForm({...form,type:"income"})}>دخل</button></div><label htmlFor="title">اسم المعاملة</label><input id="title" required value={form.title} onChange={e => setForm({...form,title:e.target.value})} placeholder="مثال: مشتريات، راتب..." /><label htmlFor="amount">المبلغ بالدينار الجزائري</label><input id="amount" type="number" min="1" required value={form.amount} onChange={e => setForm({...form,amount:e.target.value})} placeholder="0" /><button className="primary-btn submit-btn" type="submit">حفظ المعاملة <Plus size={16}/></button><p className="modal-note"><ShieldCheck size={14}/> هذه نسخة تجريبية؛ لن تُحفظ البيانات في قاعدة بيانات.</p></motion.form></motion.div>}</AnimatePresence>
@@ -101,10 +151,10 @@ function App() {
   );
 }
 
-function SectionView({section,transactions,onAdd}:{section:Section;transactions:typeof initialTransactions;onAdd:()=>void}) {
-  if(section==="المعاملات") return <div className="panel section-panel"><div className="panel-heading"><div><h3>سجل المعاملات</h3><p>راجع حركاتك المالية الأخيرة</p></div><button className="primary-btn" onClick={onAdd}><Plus size={16}/> إضافة معاملة</button></div>{transactions.map(t=><div className="transaction-row" key={t.id}><div className={`transaction-icon ${t.color}`}><t.icon size={18}/></div><div className="transaction-info"><b>{t.title}</b><small>{t.category} · {t.date}</small></div><div className={t.type==="income"?"amount positive-amount":"amount"}>{t.type==="income"?"+":"−"}{money(t.amount)} <small>دج</small></div></div>)}</div>;
+function SectionView({section,transactions,onAdd,search,balance}:{section:CoreSection;transactions:typeof initialTransactions;onAdd:()=>void;search:string;balance:number}) {
+  if(section==="المعاملات") return <div className="panel section-panel"><div className="panel-heading"><div><h3>سجل المعاملات</h3><p>راجع حركاتك المالية الأخيرة</p></div><button className="primary-btn" onClick={onAdd}><Plus size={16}/> إضافة معاملة</button></div>{transactions.length===0&&<p className="ds-empty-search">لا توجد معاملات تجريبية تطابق «{search}».</p>}{transactions.map(t=><div className="transaction-row" key={t.id}><div className={`transaction-icon ${t.color}`}><t.icon size={18}/></div><div className="transaction-info"><b>{t.title}</b><small>{t.category} · {t.date}</small></div><div className={t.type==="income"?"amount positive-amount":"amount"}>{t.type==="income"?"+":"−"}{money(t.amount)} <small>دج</small></div></div>)}</div>;
   const content = {
-    "الحسابات":{icon:Wallet,title:"حساباتك المالية",desc:"نظرة موحدة على أموالك في مختلف الحسابات",items:[["الحساب النقدي","نقداً","125,000 دج"],["الحساب البنكي","بنك الجزائر","159,500 دج"]]},
+    "الحسابات":{icon:Wallet,title:"محفظة العرض المالي",desc:"أرقام مشتقة من معاملات الجلسة التجريبية فقط",items:[["محفظة تجريبية","رصيد يحسب من القيود التجريبية",money(balance)+" دج"],["ربط الحسابات الفعلية","غير متاح قبل تنفيذ المصادقة والتخزين","غير متصل"]]},
     "الميزانية":{icon:LayoutGrid,title:"خطتك الشهرية",desc:"وزّع دخلك وراقب المصروفات ضمن حدود واضحة",items:[["الطعام والتسوق","26% من الميزانية","18,500 دج"],["الفواتير","17.5% من الميزانية","12,250 دج"],["النقل","9.4% من الميزانية","6,600 دج"]]},
     "الأهداف":{icon:Target,title:"أهدافك المالية",desc:"حوّل خططك إلى أهداف قابلة للمتابعة",items:[["شراء حاسوب جديد","62.5% مكتمل","125,000 دج"],["صندوق الطوارئ","قيد التخطيط","0 دج"]]}
   }[section as "الحسابات"|"الميزانية"|"الأهداف"];
