@@ -183,3 +183,58 @@ html[data-dinaro-density="comfortable"] .transaction-row { min-height: 68px; }
   .ds-button, .nav-item, .sidebar { transition-duration: .01ms !important; animation: none !important; }
   .sidebar, .panel, .topbar { backdrop-filter: none; -webkit-backdrop-filter: none; }
 }
+
+/* Approved prototype direction: desktop navigation on left, Arabic RTL content on right. */
+@media(min-width:901px) {
+  html[dir="rtl"] .sidebar {
+    left:0; right:auto;
+    border-left:0; border-right:1px solid var(--ds-border);
+    box-shadow:8px 0 35px #00000012;
+  }
+  html[dir="rtl"] .main-area { margin-left:258px; margin-right:0; }
+}
+@media(min-width:901px) and (max-width:1150px) {
+  html[dir="rtl"] .main-area { margin-left:230px; margin-right:0; }
+}
+@media(max-width:900px) {
+  html[dir="rtl"] .sidebar {
+    left:0; right:auto;
+    transform:translateX(-100%);
+  }
+  html[dir="rtl"] .sidebar.sidebar-open { transform:translateX(0); }
+  html[dir="rtl"] .main-area { margin-left:0; margin-right:0; width:100%; }
+}
+html[data-dinaro-theme="dark"] .topbar {
+  background:linear-gradient(90deg,#0d1e25e6,#101a21d9);
+}
+html[data-dinaro-theme="dark"] .balance-card {
+  background:linear-gradient(125deg,#0b4f40 0%,#0d6a55 60%,#113e49 100%);
+  box-shadow:0 12px 36px #071e1c70;
+}
+.balance-card .balance-glow{
+  background:radial-gradient(circle,color-mix(in srgb,var(--ds-ice) 34%,transparent),transparent 65%);
+}
+.brand-mark {
+  background:linear-gradient(150deg,var(--ds-emerald),var(--ds-emerald-strong));
+}
+.brand-mark span{color:var(--ds-on-emerald)}
+.nav-item.active {border:1px solid color-mix(in srgb,var(--ds-emerald) 35%,transparent)}
+.panel,.stat-card {box-shadow:0 10px 34px #0000000c}
+html[data-dinaro-theme="light"] .insight-card,
+html[data-dinaro-theme="light"] .upgrade-card,
+html[data-dinaro-theme="light"] .workspace {
+  color:var(--ds-text);
+}
+html[data-dinaro-theme="light"] .sidebar .brand small,
+html[data-dinaro-theme="light"] .insight-card > div:nth-child(2) > span,
+html[data-dinaro-theme="light"] .upgrade-card > b {
+  color:var(--ds-muted);
+}
+html[data-dinaro-theme="light"] .nav-item:hover {color:var(--ds-text)}
+html[data-dinaro-theme="light"] .stat-foot span,
+html[data-dinaro-theme="light"] .budget-categories > div,
+html[data-dinaro-theme="light"] .goal-progress > div:first-child,
+html[data-dinaro-theme="light"] .goal-progress > small,
+html[data-dinaro-theme="light"] .empty-hint p {color:var(--ds-muted)}
+html[data-dinaro-theme="light"] .budget-categories b,
+html[data-dinaro-theme="light"] .chart-panel h3 {color:var(--ds-text)}
