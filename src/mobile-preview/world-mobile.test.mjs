@@ -4,7 +4,7 @@ import {readFileSync} from "node:fs";
 import {join} from "node:path";
 import {fileURLToPath} from "node:url";
 
-const root=fileURLToPath(new URL("../../..",import.meta.url));
+const root=fileURLToPath(new URL("../../",import.meta.url));
 const read=p=>readFileSync(join(root,p),"utf8");
 const mobileWorld=read("src/mobile-preview/MobileWorld.tsx");
 const home=read("src/mobile-preview/MobilePreview.tsx");
