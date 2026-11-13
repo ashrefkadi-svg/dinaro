@@ -1,0 +1,50 @@
+/* DINARO local-only manual ledger feature; inherits Design System 1.0 tokens. */
+.lw-shell{display:grid;gap:20px;color:var(--ds-text)}
+.lw-header,.lw-toolbar{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.lw-header h2{font-size:25px;margin:9px 0 5px}
+.lw-header p{font-size:12px;color:var(--ds-muted);line-height:1.9;margin:0}
+.lw-eyebrow{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ds-ice);font-weight:700}
+.lw-warning{display:flex;align-items:flex-start;gap:12px;padding:14px 18px;border:1px solid color-mix(in srgb,var(--ds-warning) 35%,var(--ds-border));border-radius:13px;color:var(--ds-muted);font-size:12px;line-height:1.9;background:color-mix(in srgb,var(--ds-warning) 6%,var(--ds-surface))}
+.lw-warning svg{flex:none;color:var(--ds-warning)}
+.lw-panel{padding:23px;background:rgba(var(--ds-surface-rgb),var(--ds-glass-opacity));border:1px solid var(--ds-border);border-radius:16px;backdrop-filter:blur(var(--ds-glass-blur))}
+.lw-panel h3{display:flex;align-items:center;gap:8px;font-size:16px;margin:0 0 16px}
+.lw-panel h3 svg{color:var(--ds-ice)}
+.lw-auth{max-width:480px;width:100%;margin-inline:auto}
+.lw-auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:22px}
+.lw-auth-tabs button{border:1px solid var(--ds-border);border-radius:11px;background:var(--ds-elevated);color:var(--ds-muted);padding:12px}
+.lw-auth-tabs button.active{border-color:var(--ds-emerald);color:var(--ds-emerald);background:color-mix(in srgb,var(--ds-emerald) 8%,var(--ds-surface))}
+.lw-form{display:grid;gap:10px}
+.lw-form label{font-size:12px;font-weight:600;color:var(--ds-muted);margin-top:4px}
+.lw-form input,.lw-form select{display:block;min-height:45px;width:100%;padding:8px 12px;border-radius:11px;border:1px solid var(--ds-border);background:var(--ds-elevated);color:var(--ds-text);font:inherit;font-size:13px}
+.lw-form .primary-btn{width:100%;margin-top:9px}
+.lw-toolbar{align-items:center;flex-wrap:wrap}
+.lw-toolbar>span,.lw-toolbar>div{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.lw-toolbar>span{font-size:12px;color:var(--ds-muted)}
+.lw-toolbar>span svg{color:var(--ds-ice)}
+.lw-toolbar strong{color:var(--ds-text)}
+.lw-account-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.lw-balance-card{padding:22px;border-radius:16px;border:1px solid color-mix(in srgb,var(--ds-emerald) 30%,var(--ds-border));background:linear-gradient(130deg,color-mix(in srgb,var(--ds-emerald) 15%,var(--ds-surface)),var(--ds-surface));display:grid;gap:14px;min-height:155px}
+.lw-balance-card>span{display:flex;align-items:center;gap:9px;color:var(--ds-muted);font-size:12px}
+.lw-balance-card>span svg{color:var(--ds-emerald)}
+.lw-balance-card>strong{font-size:25px;color:var(--ds-text);overflow-wrap:anywhere;direction:ltr;text-align:right}
+.lw-balance-card>small{font-size:11px;color:var(--ds-muted)}
+.lw-no-accounts{grid-column:1/-1;color:var(--ds-muted);font-size:13px}
+.lw-tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.lw-entry-list{display:grid}
+.lw-entry{display:flex;align-items:center;gap:12px;padding:15px 0;border-top:1px solid var(--ds-border)}
+.lw-entry svg{flex:none;color:var(--ds-ice)}
+.lw-entry span{flex:1;font-size:12px;font-weight:600}
+.lw-entry small{display:block;color:var(--ds-muted);font-size:10px;margin-top:4px}
+.lw-entry strong{font-size:13px;color:var(--ds-text)}
+.lw-empty{color:var(--ds-muted);font-size:12px}
+.lw-message{display:grid;justify-items:center;gap:12px;text-align:center;max-width:600px;margin:auto}
+.lw-message svg{color:var(--ds-ice)}
+.lw-message h3,.lw-message p{margin:0}
+.lw-message p{color:var(--ds-muted);line-height:1.9;font-size:12px}
+.lw-message code{padding:3px 6px;border-radius:5px;background:var(--ds-elevated)}
+.lw-error,.lw-success{padding:12px 14px;border-radius:11px;font-size:12px;line-height:1.8;margin:0}
+.lw-error{color:var(--ds-danger);background:color-mix(in srgb,var(--ds-danger) 10%,var(--ds-surface))}
+.lw-success{color:var(--ds-emerald);background:color-mix(in srgb,var(--ds-emerald) 9%,var(--ds-surface))}
+@media(max-width:900px){.lw-account-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.lw-header{flex-direction:column}.lw-tools,.lw-account-grid{grid-template-columns:1fr}.lw-panel{padding:16px}.lw-balance-card{min-height:130px}.lw-header h2{font-size:22px}.lw-toolbar>div .secondary-btn{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.lw-panel{backdrop-filter:none}}

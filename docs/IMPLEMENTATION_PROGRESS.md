@@ -41,3 +41,18 @@ Check GitHub Actions for the most recent commit result before claiming the code 
 
 ## Financial-product safety
 Transfer to goals should move money between accounts, not create or destroy money. Simulation should never commit ledger entries. A real backend must validate posting balance and account permissions atomically; this client-only domain module is NOT itself a complete backend.
+
+
+## Subsequent implementation slice — draft PR #3 (2026-11-13)
+
+A second branch, feat/dinaro-local-ledger-api, now contains an opt-in **local** manual ledger. This newer scope supersedes older statements in this file that no backend or database code exists on the development branches (those statements remain true for the initial PR #2 and main).
+
+- Node 22 SQLite local database, schema version 1; stored users/sessions/accounts/ledger entries.
+- Loopback-only local API with password hashing, sessions, HttpOnly SameSite Strict cookie, request verification header and user isolation.
+- Balanced and atomic income/expense/transfer posting, insufficient-funds checks, idempotency and conflict rejection.
+- React page **دفتر محلي** to register/login, add manually recorded wallets, record transactions, view balances, logout, and export only recent entries.
+- CI integration tests confirm persistence across reopening DB, session management, cross-user access prevention and idempotency.
+
+Important limits: this local-development service is **not** a production backend or bank connector; no TLS deployment, encryption-at-rest, full export, secure recovery, full device QA, formal authorization audit or external security verification. The existing dashboard is intentionally separate synthetic data. See docs/LOCAL_BACKEND.md.
+
+PR: https://github.com/ashrefkadi-svg/dinaro/pull/3

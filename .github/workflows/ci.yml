@@ -17,5 +17,7 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Test design preferences
         run: npm run test
+      - name: Verify local SQLite ledger and authentication API
+        run: npm run test:api
       - name: Typecheck and production build
         run: npm run build
