@@ -1,6 +1,7 @@
 import {useState} from "react";
 import {Compass,MessageCircle,Map,ShieldCheck,Sparkles,RefreshCw,VolumeX} from "lucide-react";
 import {NpcCharacter} from "../features/world/NpcCharacter";
+import {VillageRPG} from "../features/world/VillageRPG";
 import {NPC_CAST,CHOICE_LABELS,chooseDialogue,sceneFromProgress} from "../features/world/npc-dialogues";
 import type {NpcId,DialogueScene,PlayerIntent,DialogueReply} from "../features/world/npc-dialogues";
 import {NPC_REGIONS,residentsOf,emotionFor,motionFor} from "../features/world/npc-definitions";
@@ -83,6 +84,8 @@ export default function MobileWorld(){
  const sentence=lastReply?.npc===npc?lastReply.text:active.lines[context][0];
  const labelScene=textForScene(context);
  return <section className="mw-world" aria-label="عالم دينارو التفاعلي — عرض خيالي">
+   <VillageRPG/>
+   <div className="mw-map-label"><span>استكشاف بقية المملكة — معاينة المناطق القادمة</span></div>
    <div className="mw-eyebrow"><Map size={17}/> THE WORLD OF DINARO <span>DEMO</span></div>
    <h2>مملكة دينارو والجزر السرية</h2>
    <p className="mw-description">استكشف المملكة، قابل شخصياتها واختار طريقة الحوار. كل شيء تجريبي ولا يرتبط بأموالك.</p>

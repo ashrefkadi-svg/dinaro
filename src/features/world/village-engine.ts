@@ -110,9 +110,9 @@ export function uniqueDiscovered(items:readonly string[],item:string):string[]{
 export function isValidGameState(value:unknown):value is GameState{
  if(!value||typeof value!=="object")return false;
  const s=value as Partial<GameState>;
- if(!s.room||!Object.hasOwn(MAPS,s.room)||!s.position||!s.direction||!s.quest)return false;
+ if(!s.room||!Object.prototype.hasOwnProperty.call(MAPS,s.room)||!s.position||!s.direction||!s.quest)return false;
  if(!["up","down","left","right"].includes(s.direction))return false;
- if(!Object.hasOwn(QUEST_LABELS,s.quest))return false;
+ if(!Object.prototype.hasOwnProperty.call(QUEST_LABELS,s.quest))return false;
  if(!isWalkable(s.room,s.position))return false;
  return Array.isArray(s.discovered)&&s.discovered.length<=20&&
   s.discovered.every(x=>typeof x==="string"&&x.length<64)&&

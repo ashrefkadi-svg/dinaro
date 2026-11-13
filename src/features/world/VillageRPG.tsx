@@ -4,11 +4,11 @@ import {BookOpen,CloudRain,Compass,House,Map,MessageCircle,Moon,RotateCcw,Save,S
 import {NpcCharacter} from "./NpcCharacter";
 import {NPC_CAST,chooseDialogue} from "./npc-dialogues";
 import {
-  MAPS,ROOM_LABELS,QUEST_LABELS,INITIAL_GAME_STATE,
+  MAPS,ROOM_LABELS,QUEST_LABELS,
   newGame,move,interact,changeTime,changeWeather,isValidGameState,
   TILE_SIZE
 } from "./village-engine";
-import type {Direction,GameState,Room} from "./village-engine";
+import type {Direction,GameState} from "./village-engine";
 import "./village-rpg.css";
 
 const SAVE_KEY="dinaro.world.starting-village.v1";
@@ -21,7 +21,6 @@ function loadGame():GameState{
   return isValidGameState(parsed)?parsed:newGame();
  }catch{return newGame();}
 }
-const directions:Record<Direction,string>={up:"فوق",down:"تحت",left:"يسار",right:"يمين"};
 const keyToDirection:Record<string,Direction>={
  ArrowUp:"up",w:"up",W:"up",ArrowDown:"down",s:"down",S:"down",
  ArrowLeft:"left",a:"left",A:"left",ArrowRight:"right",d:"right",D:"right"
@@ -49,8 +48,6 @@ export function VillageRPG(){
  const [dialogueIndex,setDialogueIndex]=useState(0);
  const boardRef=useRef<HTMLDivElement|null>(null);
  const savedOnce=useRef(false);
- const gameRef=useRef(game);
- gameRef.current=game;
  const step=useCallback((direction:Direction)=>setGame(old=>move(old,direction)),[]);
  const action=useCallback(()=>setGame(old=>interact(old)),[]);
  useEffect(()=>{
@@ -83,7 +80,7 @@ export function VillageRPG(){
   if(!board)return;
   const x=game.position.x*TILE_SIZE;
   const y=game.position.y*TILE_SIZE;
-  board.scrollTo({left:Math.max(0,x-board.clientWidth/2),top:Math.max(0,y-board.clientHeight/2),behavior:"instant"});
+  board.scrollTo({left:Math.max(0,x-board.clientWidth/2),top:Math.max(0,y-board.clientHeight/2),behavior:"auto"});
  },[game.position.x,game.position.y,game.room]);
  const rows=MAPS[game.room],width=rows[0].length;
  const npcLine=game.talkingTo?chooseDialogue({
