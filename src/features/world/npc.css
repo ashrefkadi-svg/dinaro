@@ -56,3 +56,52 @@
  .npc-person{min-height:85px}.npc-chat{padding:10px}.npc-bubble{max-width:95%}
  .npc-dialogue-head{align-items:flex-start;flex-direction:column}}
 @media(prefers-reduced-motion:reduce){.npc-person{transition:none}.npc-panel{-webkit-backdrop-filter:none;backdrop-filter:none}}
+
+/* NPC runtime prototype sprites: hand-authored pixel shapes, replace with final assets after art QA */
+.npc-art{display:inline-grid;place-items:center;position:relative;flex:none;overflow:visible;isolation:isolate}
+.npc-art svg{display:block;width:100%;height:100%;object-fit:contain;overflow:visible;image-rendering:pixelated;filter:drop-shadow(0 8px 9px #0005)}
+.npc-art--thumb{width:48px;height:61px}
+.npc-art--portrait{width:80px;height:104px}
+.npc-art--scene{width:160px;height:210px}
+.npc-art--left svg{transform:scaleX(-1)}
+.npc-art--back svg{filter:brightness(.83) drop-shadow(0 8px 9px #0005)}
+.npc-art--walk .npc-sprite-body{animation:npc-bob .38s steps(2,end) infinite}
+.npc-art--walk .npc-sprite-leg-left{transform-origin:40px 92px;animation:npc-left-leg .36s steps(2,end) infinite}
+.npc-art--walk .npc-sprite-leg-right{transform-origin:60px 92px;animation:npc-right-leg .36s steps(2,end) infinite}
+.npc-art--talk .npc-sprite-body{animation:npc-talk .65s steps(2,end) infinite}
+.npc-art--talk .npc-sprite-arm-right{transform-origin:64px 64px;animation:npc-hand .65s steps(2,end) infinite}
+.npc-art--celebrate .npc-sprite-body{animation:npc-celebrate .65s ease-in-out infinite}
+.npc-art--celebrate .npc-sprite-arm-left{transform-origin:32px 66px;animation:npc-arm-left .65s steps(2,end) infinite}
+.npc-art--celebrate .npc-sprite-arm-right{transform-origin:64px 66px;animation:npc-arm-right .65s steps(2,end) infinite}
+.npc-art--idle .npc-sprite-body{animation:npc-breathe 2.3s steps(2,end) infinite}
+@keyframes npc-breathe{50%{transform:translateY(-1px)}}
+@keyframes npc-bob{50%{transform:translateY(-3px)}}
+@keyframes npc-left-leg{50%{transform:rotate(-13deg)}}
+@keyframes npc-right-leg{50%{transform:rotate(13deg)}}
+@keyframes npc-hand{50%{transform:rotate(-12deg)}}
+@keyframes npc-talk{50%{transform:translateY(1px)}}
+@keyframes npc-celebrate{50%{transform:translateY(-9px)}}
+@keyframes npc-arm-left{50%{transform:rotate(35deg)}}
+@keyframes npc-arm-right{50%{transform:rotate(-35deg)}}
+.npc-person .npc-symbol{width:52px;height:62px;background:linear-gradient(145deg,var(--ds-elevated),var(--ds-surface));border:1px solid var(--ds-border);border-radius:12px}
+.npc-person{min-height:117px}
+.npc-region-picker{display:flex;justify-content:space-between;align-items:center;gap:11px;flex-wrap:wrap}
+.npc-region-picker>span{font-size:12px;color:var(--ds-muted)}
+.npc-region-picker select{width:min(100%,265px);border:1px solid var(--ds-border);background:var(--ds-elevated);border-radius:10px;color:var(--ds-text);font-size:12px;padding:10px 12px}
+.npc-stage{display:flex;align-items:center;gap:16px;background:linear-gradient(140deg,color-mix(in srgb,var(--ds-emerald) 11%,var(--ds-surface)),var(--ds-elevated));padding:13px;border-radius:17px;border:1px solid var(--ds-border)}
+.npc-stage-art{min-width:175px;border-radius:14px;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 75%,color-mix(in srgb,var(--ds-emerald) 21%,var(--ds-surface)),transparent 72%);min-height:220px}
+.npc-stage-meta{flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:11px;min-width:0}
+.npc-stage-meta>strong{font-size:18px;color:var(--ds-text)}
+.npc-stage-meta>small{font-size:11px;line-height:1.7;color:var(--ds-muted)}
+.npc-anim-controls{display:flex;gap:6px;flex-wrap:wrap}
+.npc-anim-controls button{border:1px solid var(--ds-border);padding:8px 9px;border-radius:9px;font-size:11px;background:var(--ds-surface);color:var(--ds-muted)}
+.npc-anim-controls button[aria-pressed="true"]{color:var(--ds-emerald);border-color:var(--ds-emerald);background:color-mix(in srgb,var(--ds-emerald) 12%,var(--ds-surface))}
+.npc-feature-bubble{display:flex;gap:10px;align-items:center;background:linear-gradient(130deg,color-mix(in srgb,var(--ds-ice) 8%,var(--ds-elevated)),var(--ds-surface));padding:12px;border:1px solid var(--ds-border);border-radius:16px;min-height:120px}
+.npc-feature-text{flex:1}
+.npc-feature-text>strong{font-size:14px;color:var(--ds-emerald)}
+.npc-feature-text>p{color:var(--ds-text);font-size:12px;line-height:1.9;margin:8px 0}
+@media(max-width:650px){.npc-stage{flex-direction:column}.npc-stage-art{min-height:168px;width:100%}.npc-art--scene{width:123px;height:168px}.npc-feature-bubble{align-items:flex-start}}
+@media(prefers-reduced-motion:reduce){
+ .npc-art .npc-sprite-body,.npc-art .npc-sprite-leg-left,.npc-art .npc-sprite-leg-right,
+ .npc-art .npc-sprite-arm-left,.npc-art .npc-sprite-arm-right{animation:none!important}
+}
