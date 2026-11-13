@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "test": "node --experimental-strip-types --test src/design-system/preferences.test.mjs src/domain/ledger.test.mjs src/features/goals/journey.test.mjs src/features/academy/puzzles.test.mjs src/features/planning/scenario.test.mjs",
+    "test": "node --experimental-strip-types --test src/design-system/preferences.test.mjs src/domain/ledger.test.mjs src/features/goals/journey.test.mjs src/features/academy/puzzles.test.mjs src/features/planning/scenario.test.mjs src/ui/premium/selectors.test.mjs",
     "check": "npm run test && npm run test:api && npm run build",
     "dev:api": "node --experimental-sqlite server/index.mjs",
     "test:api": "node --experimental-sqlite --test server/store.test.mjs server/api.test.mjs"
