@@ -5,6 +5,7 @@ import App from "./App";
 import { DesignSettings } from "./design-system/DesignSettings";
 import "./styles.css";
 import "./design-system/tokens.css";
+import "./features/features.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
