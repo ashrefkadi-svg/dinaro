@@ -1,0 +1,46 @@
+name: DINARO Mobile 2.0 static preview
+on:
+  workflow_dispatch:
+  push:
+    branches: ["feat/dinaro-mobile-2"]
+permissions:
+  contents: read
+concurrency:
+  group: dinaro-mobile-preview
+  cancel-in-progress: true
+jobs:
+  build-static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install
+        run: npm install --no-audit --no-fund
+      - name: Unit tests for public preview
+        run: npm run test:mobile
+      - name: Typecheck source
+        run: npx tsc --noEmit
+      - name: Build isolated mobile demo
+        run: npm run build:mobile
+      - name: Reject backend code in browser bundle
+        run: |
+          if grep -R -i -E 'api/auth|api/transactions|server/store|sqlite|password_hash' dist-mobile/assets; then
+            echo "Unsafe backend/API reference in static preview"; exit 1;
+          fi
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./dist-mobile
+  deploy:
+    needs: build-static
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
