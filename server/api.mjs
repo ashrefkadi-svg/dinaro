@@ -79,7 +79,8 @@ export async function startLocalApi({dbPath,port=8787,host="127.0.0.1"}={}){
 
   const server=createServer(async(req,res)=>{
     try{
-      const path=new URL(req.url??"/","http://localhost").pathname;
+      const url=new URL(req.url??"/","http://localhost");
+      const path=url.pathname;
       const method=req.method??"GET";
       if(method==="OPTIONS"){send(res,403,{error:"CORS is disabled"});return;}
       if(!["GET","POST"].includes(method))throw new StoreError(405,"Method not allowed");
@@ -128,6 +129,17 @@ export async function startLocalApi({dbPath,port=8787,host="127.0.0.1"}={}){
         send(res,account.alreadyApplied?200:201,{account});return;
       }
       if(method==="GET"&&path==="/api/transactions"){
+        const params=url.searchParams;
+        if(params.has("limit")||params.has("cursor")){
+          if(params.getAll("limit").length>1||params.getAll("cursor").length>1)
+            throw new StoreError(400,"Duplicate pagination parameter");
+          const rawLimit=params.get("limit");
+          if(rawLimit!==null&&!/^[1-9][0-9]{0,2}$/.test(rawLimit))
+            throw new StoreError(400,"Transaction page limit must be 1-100");
+          send(res,200,store.listTransactionsPage(user.id,{
+            limit:rawLimit===null?50:Number(rawLimit),cursor:params.get("cursor")
+          }));return;
+        }
         send(res,200,{transactions:store.listTransactions(user.id)});return;
       }
       if(method==="POST"&&path==="/api/transactions"){
