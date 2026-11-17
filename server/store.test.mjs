@@ -71,7 +71,6 @@ test("bad amounts and unowned accounts cannot mutate ledger",()=>{
   }finally{db.close();}
 });
 
-
 test("balances remain centime-exact beyond Number.MAX_SAFE_INTEGER",()=>{
   const db=openStore(":memory:");
   try{
@@ -154,4 +153,36 @@ test("cursor pagination visits all transactions exactly once and protects user b
       assert.throws(()=>db.listTransactionsPage(alice.id,{limit}),e=>e.status===400);
     assert.equal(db.listTransactionsPage(bob.id,{limit:50}).transactions.length,1);
   }finally{db.close();}
+});
+
+test("registered account, goals, budgets and exact balances persist after SQLite restart",()=>{
+  const dir=mkdtempSync(join(tmpdir(),"dinaro-goals-persist-"));
+  const file=join(dir,"personal.sqlite");
+  try{
+    let db=openStore(file);
+    const user=db.register("persist-finance@example.com","a_real_test_password_12345");
+    const other=db.register("second-person@example.com","another_real_test_password_456");
+    const cash=db.createAccount(user.id,{name:"Primary cash",openingMinor:"150000",requestId:"opening-wallet-01"});
+    const created=db.createGoal(user.id,{name:"Savings",targetMinor:"300000",requestId:"savings-goal-001"});
+    const again=db.createGoal(user.id,{name:"Savings",targetMinor:"300000",requestId:"savings-goal-001"});
+    assert.equal(again.alreadyApplied,true);
+    assert.equal(again.id,created.id);
+    assert.throws(()=>db.createGoal(user.id,{name:"Other",targetMinor:"300000",requestId:"savings-goal-001"}),e=>e.status===409);
+    db.createTransaction(user.id,{kind:"transfer",fromAccountId:cash.id,toAccountId:created.accountId,amountMinor:"33333",requestId:"savings-fund-001"});
+    assert.equal(db.listGoals(user.id)[0].savedMinor,"33333");
+    db.upsertBudget(user.id,{category:"Food",limitMinor:"42000"});
+    assert.equal(db.listGoals(other.id).length,0);
+    assert.equal(db.listBudgets(other.id).length,0);
+    assert.throws(()=>db.createTransaction(other.id,{kind:"expense",fromAccountId:created.accountId,amountMinor:"1",requestId:"steal-request-01"}),e=>e.status===404);
+    db.close();
+    db=openStore(file);
+    assert.deepEqual(db.login("persist-finance@example.com","a_real_test_password_12345"),user);
+    assert.equal(db.listGoals(user.id)[0].savedMinor,"33333");
+    assert.equal(db.listBudgets(user.id)[0].limitMinor,"42000");
+    assert.equal(db.listAccounts(user.id).reduce((s,a)=>s+BigInt(a.balanceMinor),0n),150000n);
+    db.createTransaction(user.id,{kind:"transfer",fromAccountId:created.accountId,toAccountId:cash.id,amountMinor:"33333",requestId:"savings-return-01"});
+    assert.equal(db.listGoals(user.id)[0].savedMinor,"0");
+    assert.equal(db.listAccounts(user.id).reduce((s,a)=>s+BigInt(a.balanceMinor),0n),150000n);
+    db.close();
+  }finally{rmSync(dir,{recursive:true,force:true});}
 });

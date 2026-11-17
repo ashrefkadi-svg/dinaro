@@ -61,7 +61,7 @@ export function openStore(filename){
   db.exec("PRAGMA busy_timeout=5000");
   if(filename!==":memory:")db.exec("PRAGMA journal_mode=WAL");
   const version=Number(db.prepare("PRAGMA user_version").get().user_version);
-  if(version>1){db.close();throw new Error("Database version is newer than the code");}
+  if(version>2){db.close();throw new Error("Database version is newer than the code");}
   if(version===0){
     db.exec("BEGIN IMMEDIATE");
     try{
@@ -74,6 +74,18 @@ export function openStore(filename){
       db.exec("CREATE INDEX idx_journals_owner ON journals(user_id,created_at)");
       db.exec("CREATE INDEX idx_postings_account ON postings(account_id)");
       db.exec("PRAGMA user_version=1");
+      db.exec("COMMIT");
+    }catch(e){db.exec("ROLLBACK");db.close();throw e;}
+  }
+  // Schema v2 is additive and transactional: existing users, journals and balances survive.
+  // For non-demo data, copy the SQLite file (including WAL checkpoint) before upgrading.
+  if(version<=1){
+    db.exec("BEGIN IMMEDIATE");
+    try{
+      db.exec("CREATE TABLE goals (id TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, account_id TEXT NOT NULL UNIQUE REFERENCES accounts(id), name TEXT NOT NULL, target_minor INTEGER NOT NULL CHECK(target_minor>0), request_id TEXT NOT NULL, created_at TEXT NOT NULL, UNIQUE(user_id,request_id))");
+      db.exec("CREATE INDEX idx_goals_owner ON goals(user_id,created_at)");
+      db.exec("CREATE TABLE budgets (user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, category TEXT NOT NULL, limit_minor INTEGER NOT NULL CHECK(limit_minor>=0), updated_at TEXT NOT NULL, PRIMARY KEY(user_id,category))");
+      db.exec("PRAGMA user_version=2");
       db.exec("COMMIT");
     }catch(e){db.exec("ROLLBACK");db.close();throw e;}
   }
@@ -218,6 +230,41 @@ export function openStore(filename){
         return {...journal(userId,key,kind,fromAccountId,toAccountId,amount,postings),alreadyApplied:false};
       });
     },
+    createGoal(userId,{name,targetMinor:rawTarget,requestId:key}){
+      requestId(key);
+      if(typeof name!=="string"||!name.trim()||name.trim().length>80)
+        throw new StoreError(400,"Goal name must have 1-80 characters");
+      const title=name.trim(),target=amountMinor(rawTarget);
+      return atomic(()=>{
+        const prior=db.prepare("SELECT id,name,target_minor FROM goals WHERE user_id=? AND request_id=?").get(userId,key);
+        if(prior){
+          if(prior.name!==title||BigInt(prior.target_minor)!==target)
+            throw new StoreError(409,"Request ID already used for different goal");
+          return {...db.prepare("SELECT id,account_id AS accountId FROM goals WHERE id=?").get(prior.id),alreadyApplied:true};
+        }
+        const goalId=randomUUID(),accountId=randomUUID(),now=new Date().toISOString();
+        db.prepare("INSERT INTO accounts(id,user_id,name,kind,opening_minor,request_id,created_at) VALUES(?,?,?,'asset',0,?,?)")
+          .run(accountId,userId,"هدف: "+title,"goal-account:"+goalId,now);
+        db.prepare("INSERT INTO goals(id,user_id,account_id,name,target_minor,request_id,created_at) VALUES(?,?,?,?,?,?,?)")
+          .run(goalId,userId,accountId,title,target,key,now);
+        return {id:goalId,accountId,alreadyApplied:false};
+      });
+    },
+    listGoals(userId){
+      const rows=db.prepare("SELECT g.id,g.name,g.account_id,CAST(g.target_minor AS TEXT) AS target_minor,g.created_at,CAST(COALESCE(SUM(p.signed_minor),0) AS TEXT) AS balance_minor FROM goals g JOIN accounts a ON a.id=g.account_id AND a.user_id=g.user_id LEFT JOIN postings p ON p.account_id=a.id WHERE g.user_id=? GROUP BY g.id ORDER BY g.created_at DESC,g.id DESC").all(userId);
+      return rows.map(g=>({id:g.id,name:g.name,accountId:g.account_id,targetMinor:g.target_minor,savedMinor:g.balance_minor,createdAt:g.created_at}));
+    },
+    upsertBudget(userId,{category,limitMinor:rawLimit}){
+      if(typeof category!=="string"||!category.trim()||category.trim().length>48)
+        throw new StoreError(400,"Budget category must have 1-48 characters");
+      const cat=category.trim(),amount=amountMinor(rawLimit,true);
+      db.prepare("INSERT INTO budgets(user_id,category,limit_minor,updated_at) VALUES(?,?,?,?) ON CONFLICT(user_id,category) DO UPDATE SET limit_minor=excluded.limit_minor,updated_at=excluded.updated_at")
+        .run(userId,cat,amount,new Date().toISOString());
+      return {category:cat,limitMinor:String(amount)};
+    },
+    listBudgets(userId){
+      return db.prepare("SELECT category,CAST(limit_minor AS TEXT) AS limitMinor FROM budgets WHERE user_id=? ORDER BY category").all(userId);
+    },
     listTransactions(userId){
       const rows=db.prepare("SELECT id,kind,request_id,from_account_id,to_account_id,CAST(amount_minor AS TEXT) AS amount_minor,created_at FROM journals WHERE user_id=? AND kind!='opening' ORDER BY created_at DESC,id DESC LIMIT 100").all(userId);
       return rows.map(row=>({...viewJournal(row),createdAt:row.created_at}));
@@ -235,10 +282,10 @@ export function openStore(filename){
         // A cursor is valid only for a journal owned by this user.
         const anchor=db.prepare("SELECT created_at FROM journals WHERE user_id=? AND id=? AND kind!='opening'").get(userId,cursor);
         if(!anchor)throw new StoreError(400,"Invalid transaction cursor");
-        rows=db.prepare("SELECT "+fields+" FROM journals WHERE user_id=? AND kind!='opening' AND (created_at<? OR (created_at=? AND id<?)) ORDER BY created_at DESC,id DESC LIMIT ?")
+        rows=db.prepare(`SELECT ${fields} FROM journals WHERE user_id=? AND kind!='opening' AND (created_at<? OR (created_at=? AND id<?)) ORDER BY created_at DESC,id DESC LIMIT ?`)
           .all(userId,anchor.created_at,anchor.created_at,cursor,limit+1);
       }else{
-        rows=db.prepare("SELECT "+fields+" FROM journals WHERE user_id=? AND kind!='opening' ORDER BY created_at DESC,id DESC LIMIT ?")
+        rows=db.prepare(`SELECT ${fields} FROM journals WHERE user_id=? AND kind!='opening' ORDER BY created_at DESC,id DESC LIMIT ?`)
           .all(userId,limit+1);
       }
       const hasMore=rows.length>limit;
@@ -247,9 +294,10 @@ export function openStore(filename){
     },
     /**
      * Complete, read-only journal snapshot for this authenticated user.
-     * Unlike listTransactions (a 100-row UI feed), this includes every
-     * journal (including opening entries), and both sides of each posting.
-     * All currency fields stay exact centime strings. NOT a restore format.
+     * Unlike listTransactions (a 100-row UI feed), this API intentionally includes
+     * EVERY journal, including opening entries, and BOTH sides of each posting.
+     * Values remain exact decimal centime strings, even above JS safe integers.
+     * The result is an audit/export format, NOT a writable restore format.
      */
     exportLedger(userId){
       const accounts=db.prepare("SELECT id,name,kind,system_key,CAST(opening_minor AS TEXT) AS opening_minor,created_at FROM accounts WHERE user_id=? ORDER BY created_at,id").all(userId)
