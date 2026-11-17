@@ -2,7 +2,7 @@ name: DINARO full project ZIP — source + previews
 on:
   workflow_dispatch:
   push:
-    branches: ["feat/dinaro-npc-art-polish-v4"]
+    branches: ["feat/dinaro-npc-art-polish-v4", "feat/dinaro-playable-starting-village"]
 permissions:
   contents: read
 jobs:

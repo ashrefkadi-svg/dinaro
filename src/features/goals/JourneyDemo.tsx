@@ -2,6 +2,7 @@ import {useState} from "react";
 import {Castle, Check, Compass, Flag, Leaf, Mountain, Sunrise, Trees} from "lucide-react";
 import {clampProgress,getJourneyState,goalProgress,WORLD_REGIONS} from "./journey";
 import {NpcDialoguePanel} from "../world/NpcDialoguePanel";
+import {VillageRPG} from "../world/VillageRPG";
 import {NpcCharacter} from "../world/NpcCharacter";
 import {residentsOf} from "../world/npc-definitions";
 import type {NpcRegion} from "../world/npc-definitions";
@@ -22,6 +23,7 @@ export function JourneyDemo(){
       </div>
       <span className="journey-demo-label">محاكاة — لا تحرّك أموالًا</span>
     </div>
+    <VillageRPG/>
     <div className="journey-stage" data-region={current.region.id} role="img" aria-label={"مشهد افتراضي: "+current.region.name}>
       <div className="journey-sun" style={{top:(100-current.sunPosition)+"%"}}/>
       <div className="journey-cloud journey-cloud-one"/>

@@ -56,9 +56,24 @@ test("local API authentication, authorization, CSRF and idempotency",async()=>{
     assert.equal((await request("/api/transactions",{method:"POST",cookie:a.cookie,body:expense})).status,200);
     assert.equal((await request("/api/accounts",{cookie:a.cookie})).data.accounts[0].balanceMinor,"10000");
     assert.equal((await request("/api/transactions",{cookie:a.cookie})).data.transactions.length,1);
+    const firstPage=await request("/api/transactions?limit=1",{cookie:a.cookie});
+    assert.equal(firstPage.status,200);
+    assert.equal(firstPage.data.transactions.length,1);
+    assert.equal(firstPage.data.nextCursor,null);
+    assert.equal((await request("/api/transactions?limit=0",{cookie:a.cookie})).status,400);
+    assert.equal((await request("/api/transactions?limit=101",{cookie:a.cookie})).status,400);
+    assert.equal((await request("/api/transactions?limit=2&limit=4",{cookie:a.cookie})).status,400);
+    assert.equal((await request("/api/transactions?cursor=bogus",{cookie:a.cookie})).status,400);
+    assert.equal((await request("/api/transactions?limit=10",{cookie:b.cookie})).data.transactions.length,0);
     const exportData=await request("/api/export",{cookie:a.cookie});
     assert.equal(exportData.status,200);
     assert.equal(exportData.data.accounts.length,1);
+    assert.equal(exportData.data.format,"dinaro-local-ledger-snapshot-v2");
+    assert.equal(exportData.data.ledger.counts.journals,2);
+    assert.equal(exportData.data.ledger.counts.postings,4);
+    assert.equal(exportData.data.ledger.journals[0].kind,"opening");
+    assert.ok(exportData.data.ledger.postings.every(p=>typeof p.signedMinor==="string"));
+    assert.equal((await request("/api/export",{cookie:b.cookie})).data.ledger.counts.journals,0);
     assert.equal((await request("/api/auth/logout",{method:"POST",cookie:a.cookie})).status,200);
     assert.equal((await request("/api/me",{cookie:a.cookie})).status,401);
     assert.equal((await request("/api/auth/login",{method:"POST",body:{
@@ -69,5 +84,41 @@ test("local API authentication, authorization, CSRF and idempotency",async()=>{
     }});
     assert.equal(login.status,200);
     assert.equal((await request("/api/accounts",{cookie:login.cookie})).data.accounts[0].balanceMinor,"10000");
+  }finally{await app.close();rmSync(dir,{recursive:true,force:true});}
+});
+
+test("real registration, goal and budget API persist per user",async()=>{
+  const dir=mkdtempSync(join(tmpdir(),"dinaro-live-api-"));
+  const app=await startLocalApi({dbPath:join(dir,"data.sqlite"),port:0});
+  const url="http://127.0.0.1:"+app.port;
+  async function req(path,method="GET",body,cookie){
+    const headers={};
+    if(cookie)headers.Cookie=cookie;
+    if(method==="POST"){headers["content-type"]="application/json";headers["x-dinaro-request"]="1";}
+    const res=await fetch(url+path,{method,headers,body:method==="POST"?JSON.stringify(body):undefined});
+    return {status:res.status,body:await res.json(),cookie:res.headers.get("set-cookie")?.split(";")[0]};
+  }
+  try{
+    const reg=await req("/api/auth/register","POST",{email:"goal-api-a@example.com",password:"real_user_password_long_123"});
+    const other=await req("/api/auth/register","POST",{email:"goal-api-b@example.com",password:"real_user_password_long_456"});
+    assert.equal(reg.status,201);assert.equal(other.status,201);
+    const wallet=await req("/api/accounts","POST",{name:"My wallet",openingMinor:"75000",requestId:"goal-api-wallet-01"},reg.cookie);
+    assert.equal(wallet.status,201);
+    const goal=await req("/api/goals","POST",{name:"Savings",targetMinor:"120000",requestId:"goal-api-create-01"},reg.cookie);
+    assert.equal(goal.status,201);
+    assert.equal((await req("/api/goals","POST",{name:"Savings",targetMinor:"120000",requestId:"goal-api-create-01"},reg.cookie)).status,200);
+    const transfer=await req("/api/transactions","POST",{kind:"transfer",fromAccountId:wallet.body.account.id,toAccountId:goal.body.goal.accountId,amountMinor:"12345",requestId:"goal-api-fund-01"},reg.cookie);
+    assert.equal(transfer.status,201);
+    const savings=await req("/api/goals","GET",undefined,reg.cookie);
+    assert.equal(savings.body.goals.length,1);assert.equal(savings.body.goals[0].savedMinor,"12345");
+    assert.equal((await req("/api/goals","GET",undefined,other.cookie)).body.goals.length,0);
+    assert.equal((await req("/api/budgets","POST",{category:"Food",limitMinor:"25000"},reg.cookie)).status,200);
+    assert.equal((await req("/api/budgets","GET",undefined,reg.cookie)).body.budgets[0].limitMinor,"25000");
+    assert.equal((await req("/api/budgets","GET",undefined,other.cookie)).body.budgets.length,0);
+    assert.equal((await req("/api/goals","GET")).status,401);
+    assert.equal((await req("/api/goals","POST",{name:"hack",targetMinor:"100",requestId:"goal-api-hacker"},other.cookie)).status,201);
+    assert.equal((await req("/api/goals","GET",undefined,reg.cookie)).body.goals.length,1);
+    const accounts=await req("/api/accounts","GET",undefined,reg.cookie);
+    assert.equal(accounts.body.accounts.reduce((s,a)=>s+BigInt(a.balanceMinor),0n),75000n);
   }finally{await app.close();rmSync(dir,{recursive:true,force:true});}
 });

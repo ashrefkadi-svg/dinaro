@@ -79,7 +79,8 @@ export async function startLocalApi({dbPath,port=8787,host="127.0.0.1"}={}){
 
   const server=createServer(async(req,res)=>{
     try{
-      const path=new URL(req.url??"/","http://localhost").pathname;
+      const url=new URL(req.url??"/","http://localhost");
+      const path=url.pathname;
       const method=req.method??"GET";
       if(method==="OPTIONS"){send(res,403,{error:"CORS is disabled"});return;}
       if(!["GET","POST"].includes(method))throw new StoreError(405,"Method not allowed");
@@ -127,7 +128,32 @@ export async function startLocalApi({dbPath,port=8787,host="127.0.0.1"}={}){
         const account=store.createAccount(user.id,body);
         send(res,account.alreadyApplied?200:201,{account});return;
       }
+      if(method==="GET"&&path==="/api/goals"){
+        send(res,200,{goals:store.listGoals(user.id)});return;
+      }
+      if(method==="POST"&&path==="/api/goals"){
+        const goal=store.createGoal(user.id,await parseBody(req));
+        send(res,goal.alreadyApplied?200:201,{goal});return;
+      }
+      if(method==="GET"&&path==="/api/budgets"){
+        send(res,200,{budgets:store.listBudgets(user.id)});return;
+      }
+      if(method==="POST"&&path==="/api/budgets"){
+        const budget=store.upsertBudget(user.id,await parseBody(req));
+        send(res,200,{budget});return;
+      }
       if(method==="GET"&&path==="/api/transactions"){
+        const params=url.searchParams;
+        if(params.has("limit")||params.has("cursor")){
+          if(params.getAll("limit").length>1||params.getAll("cursor").length>1)
+            throw new StoreError(400,"Duplicate pagination parameter");
+          const rawLimit=params.get("limit");
+          if(rawLimit!==null&&!/^[1-9][0-9]{0,2}$/.test(rawLimit))
+            throw new StoreError(400,"Transaction page limit must be 1-100");
+          send(res,200,store.listTransactionsPage(user.id,{
+            limit:rawLimit===null?50:Number(rawLimit),cursor:params.get("cursor")
+          }));return;
+        }
         send(res,200,{transactions:store.listTransactions(user.id)});return;
       }
       if(method==="POST"&&path==="/api/transactions"){
@@ -136,9 +162,10 @@ export async function startLocalApi({dbPath,port=8787,host="127.0.0.1"}={}){
         send(res,transaction.alreadyApplied?200:201,{transaction});return;
       }
       if(method==="GET"&&path==="/api/export"){
-        send(res,200,{format:"dinaro-local-v1",user,accounts:store.listAccounts(user.id),
-          transactions:store.listTransactions(user.id),
-          warning:"Manual local data; transaction export currently contains the latest 100 transactions."});
+        const ledger=store.exportLedger(user.id);
+        send(res,200,{format:"dinaro-local-ledger-snapshot-v2",currency:"DZD",amountUnit:"centime",
+          user,accounts:store.listAccounts(user.id),goals:store.listGoals(user.id),budgets:store.listBudgets(user.id),ledger,
+          warning:"Complete local read-only journal and goal/budget metadata snapshot. NOT a restorable database backup; retain the original SQLite database securely."});
         return;
       }
       throw new StoreError(404,"Endpoint not found");
