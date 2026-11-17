@@ -59,6 +59,12 @@ test("local API authentication, authorization, CSRF and idempotency",async()=>{
     const exportData=await request("/api/export",{cookie:a.cookie});
     assert.equal(exportData.status,200);
     assert.equal(exportData.data.accounts.length,1);
+    assert.equal(exportData.data.format,"dinaro-local-ledger-snapshot-v2");
+    assert.equal(exportData.data.ledger.counts.journals,2);
+    assert.equal(exportData.data.ledger.counts.postings,4);
+    assert.equal(exportData.data.ledger.journals[0].kind,"opening");
+    assert.ok(exportData.data.ledger.postings.every(p=>typeof p.signedMinor==="string"));
+    assert.equal((await request("/api/export",{cookie:b.cookie})).data.ledger.counts.journals,0);
     assert.equal((await request("/api/auth/logout",{method:"POST",cookie:a.cookie})).status,200);
     assert.equal((await request("/api/me",{cookie:a.cookie})).status,401);
     assert.equal((await request("/api/auth/login",{method:"POST",body:{

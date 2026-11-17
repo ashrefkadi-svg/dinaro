@@ -92,3 +92,33 @@ test("balances remain centime-exact beyond Number.MAX_SAFE_INTEGER",()=>{
     assert.throws(()=>db.createTransaction(user.id,{kind:"expense",fromAccountId:cash.id,amountMinor:"2",requestId:"expense-centime-01"}),e=>e.status===409);
   }finally{db.close();}
 });
+
+
+test("full export contains all journals and postings, including >100 records, without cross-user leakage",()=>{
+  const db=openStore(":memory:");
+  try{
+    const a=db.register("audit-a@example.com","a_secure_audit_user_password_123");
+    const b=db.register("audit-b@example.com","a_secure_audit_user_password_456");
+    const wallet=db.createAccount(a.id,{name:"Audit wallet",openingMinor:"10000",requestId:"audit-wallet-001"});
+    const other=db.createAccount(b.id,{name:"Separate",openingMinor:"500",requestId:"audit-wallet-002"});
+    for(let i=0;i<123;i++){
+      db.createTransaction(a.id,{kind:"income",toAccountId:wallet.id,amountMinor:"1",requestId:`audit-income-${String(i).padStart(4,"0")}`});
+    }
+    assert.equal(db.listTransactions(a.id).length,100,"UI feed still deliberately limited to 100");
+    const snapshot=db.exportLedger(a.id);
+    assert.equal(snapshot.counts.journals,124,"includes opening journal");
+    assert.equal(snapshot.counts.postings,248,"every journal includes two postings");
+    assert.equal(snapshot.counts.accounts,4,"includes three internal and one asset account");
+    assert.ok(snapshot.journals.every(j=>typeof j.amountMinor==="string"));
+    assert.ok(snapshot.postings.every(p=>typeof p.signedMinor==="string"));
+    const accountIds=new Set(snapshot.accounts.map(x=>x.id));
+    assert.ok(snapshot.postings.every(p=>accountIds.has(p.accountId)));
+    assert.ok(!accountIds.has(other.id),"another user's asset account must not leak");
+    assert.equal(db.exportLedger(b.id).counts.journals,1);
+    assert.equal(db.listAccounts(a.id)[0].balanceMinor,"10123");
+    for(const j of snapshot.journals){
+      const signed=snapshot.postings.filter(p=>p.journalId===j.id).reduce((s,p)=>s+BigInt(p.signedMinor),0n);
+      assert.equal(signed,0n,j.id);
+    }
+  }finally{db.close();}
+});
