@@ -136,9 +136,10 @@ export async function startLocalApi({dbPath,port=8787,host="127.0.0.1"}={}){
         send(res,transaction.alreadyApplied?200:201,{transaction});return;
       }
       if(method==="GET"&&path==="/api/export"){
-        send(res,200,{format:"dinaro-local-v1",user,accounts:store.listAccounts(user.id),
-          transactions:store.listTransactions(user.id),
-          warning:"Manual local data; transaction export currently contains the latest 100 transactions."});
+        const ledger=store.exportLedger(user.id);
+        send(res,200,{format:"dinaro-local-ledger-snapshot-v2",currency:"DZD",amountUnit:"centime",
+          user,accounts:store.listAccounts(user.id),ledger,
+          warning:"Complete local read-only journal snapshot. NOT a restorable database backup; retain the original SQLite database securely."});
         return;
       }
       throw new StoreError(404,"Endpoint not found");

@@ -219,8 +219,34 @@ export function openStore(filename){
       });
     },
     listTransactions(userId){
-      const rows=db.prepare("SELECT id,kind,request_id,from_account_id,to_account_id,amount_minor,created_at FROM journals WHERE user_id=? AND kind!='opening' ORDER BY created_at DESC,id DESC LIMIT 100").all(userId);
+      const rows=db.prepare("SELECT id,kind,request_id,from_account_id,to_account_id,CAST(amount_minor AS TEXT) AS amount_minor,created_at FROM journals WHERE user_id=? AND kind!='opening' ORDER BY created_at DESC,id DESC LIMIT 100").all(userId);
       return rows.map(row=>({...viewJournal(row),createdAt:row.created_at}));
+    },
+    /**
+     * Complete, read-only journal snapshot for this authenticated user.
+     * Unlike listTransactions (a 100-row UI feed), this includes every
+     * journal (including opening entries), and both sides of each posting.
+     * All currency fields stay exact centime strings. NOT a restore format.
+     */
+    exportLedger(userId){
+      const accounts=db.prepare("SELECT id,name,kind,system_key,CAST(opening_minor AS TEXT) AS opening_minor,created_at FROM accounts WHERE user_id=? ORDER BY created_at,id").all(userId)
+        .map(row=>({id:row.id,name:row.name,kind:row.kind,systemKey:row.system_key,
+          openingMinor:row.opening_minor,createdAt:row.created_at}));
+      const journals=db.prepare("SELECT id,request_id,kind,from_account_id,to_account_id,CAST(amount_minor AS TEXT) AS amount_minor,created_at FROM journals WHERE user_id=? ORDER BY created_at,id").all(userId)
+        .map(row=>({...viewJournal(row),createdAt:row.created_at}));
+      const postings=db.prepare("SELECT p.journal_id,p.account_id,CAST(p.signed_minor AS TEXT) AS signed_minor FROM postings p JOIN journals j ON j.id=p.journal_id WHERE j.user_id=? ORDER BY j.created_at,j.id,p.account_id").all(userId)
+        .map(row=>({journalId:row.journal_id,accountId:row.account_id,signedMinor:row.signed_minor}));
+      const owned=new Set(accounts.map(a=>a.id));
+      const byJournal=new Map(journals.map(j=>[j.id,{count:0,sum:0n}]));
+      for(const p of postings){
+        const j=byJournal.get(p.journalId);
+        if(!j||!owned.has(p.accountId))throw new StoreError(500,"Ledger ownership invariant violated");
+        j.count++;j.sum+=BigInt(p.signedMinor);
+      }
+      for(const j of byJournal.values()){
+        if(j.count<2||j.sum!==0n)throw new StoreError(500,"Unbalanced journal detected during export");
+      }
+      return {accounts,journals,postings,counts:{accounts:accounts.length,journals:journals.length,postings:postings.length}};
     }
   };
 }
