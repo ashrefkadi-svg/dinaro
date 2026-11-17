@@ -70,3 +70,25 @@ test("bad amounts and unowned accounts cannot mutate ledger",()=>{
     assert.equal(db.listTransactions(user.id).length,0);
   }finally{db.close();}
 });
+
+
+test("balances remain centime-exact beyond Number.MAX_SAFE_INTEGER",()=>{
+  const db=openStore(":memory:");
+  try{
+    const user=db.register("big-balance@example.com","secure_test_password_big_balance_123");
+    const cash=db.createAccount(user.id,{name:"Large balance",requestId:"large-account-01"});
+    const deposit="9000000000000"; // Per-request cap; valid integer minor unit string.
+    for(let i=0;i<1001;i++)db.createTransaction(user.id,{
+      kind:"income",toAccountId:cash.id,amountMinor:deposit,requestId:`deposit-${String(i).padStart(8,"0")}`
+    });
+    const balance=1001n*BigInt(deposit);
+    assert.ok(balance>BigInt(Number.MAX_SAFE_INTEGER));
+    assert.equal(db.listAccounts(user.id)[0].balanceMinor,balance.toString());
+    db.createTransaction(user.id,{kind:"expense",fromAccountId:cash.id,amountMinor:"1",requestId:"expense-centime-01"});
+    assert.equal(db.listAccounts(user.id)[0].balanceMinor,(balance-1n).toString());
+    const after=db.createTransaction(user.id,{kind:"expense",fromAccountId:cash.id,amountMinor:"1",requestId:"expense-centime-01"});
+    assert.equal(after.alreadyApplied,true);
+    assert.equal(db.listAccounts(user.id)[0].balanceMinor,(balance-1n).toString());
+    assert.throws(()=>db.createTransaction(user.id,{kind:"expense",fromAccountId:cash.id,amountMinor:"2",requestId:"expense-centime-01"}),e=>e.status===409);
+  }finally{db.close();}
+});

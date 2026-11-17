@@ -7,7 +7,9 @@ import {dirname} from "node:path";
 import {randomBytes, randomUUID, createHash, scryptSync, timingSafeEqual} from "node:crypto";
 import {DatabaseSync} from "node:sqlite";
 
-const MAX_MINOR=9_000_000_000_000;
+const MAX_MINOR=9_000_000_000_000n;
+// Prevent SQLite signed-64bit aggregate overflow on a single asset account.
+const MAX_ASSET_BALANCE=9_000_000_000_000_000_000n;
 const SESSION_AGE=7*24*60*60*1000;
 const EMAIL=/^[^\s@]{1,64}@[^\s@]{1,190}\.[^\s@]{2,}$/;
 
@@ -22,8 +24,8 @@ function requestId(value) {
 function amountMinor(value,allowZero=false){
   if(typeof value!=="string"||!/^(0|[1-9]\d{0,12})$/.test(value))
     throw new StoreError(400,"Use a decimal string of DZD minor units");
-  const n=Number(value);
-  if(!Number.isSafeInteger(n)||n>MAX_MINOR||(allowZero?n<0:n<1))
+  const n=BigInt(value);
+  if(n>MAX_MINOR||(allowZero?n<0n:n<1n))
     throw new StoreError(400,"Amount out of allowed range");
   return n;
 }
@@ -92,14 +94,15 @@ export function openStore(filename){
     return row.id;
   }
   function balanceOf(id){
-    const row=db.prepare("SELECT COALESCE(SUM(signed_minor),0) AS amount FROM postings WHERE account_id=?").get(id);
-    if(!Number.isSafeInteger(row.amount))throw new StoreError(422,"Balance outside safe range");
-    return row.amount;
+    // CAST to TEXT before crossing SQLite -> JS: numeric API reads can silently
+    // round integer balances above Number.MAX_SAFE_INTEGER.
+    const row=db.prepare("SELECT CAST(COALESCE(SUM(signed_minor),0) AS TEXT) AS amount FROM postings WHERE account_id=?").get(id);
+    return BigInt(row.amount);
   }
   function writePostings(journalId,postings){
-    const sum=postings.reduce((s,p)=>s+p.signedMinor,0);
-    if(postings.length<2||sum!==0||
-       postings.some(p=>!Number.isSafeInteger(p.signedMinor)||p.signedMinor===0)||
+    const sum=postings.reduce((s,p)=>s+p.signedMinor,0n);
+    if(postings.length<2||sum!==0n||
+       postings.some(p=>typeof p.signedMinor!=="bigint"||p.signedMinor===0n)||
        new Set(postings.map(p=>p.accountId)).size!==postings.length)
       throw new StoreError(422,"Unbalanced or invalid postings");
     const insert=db.prepare("INSERT INTO postings(journal_id,account_id,signed_minor) VALUES(?,?,?)");
@@ -163,14 +166,14 @@ export function openStore(filename){
       return atomic(()=>{
         const prior=db.prepare("SELECT id,name,opening_minor FROM accounts WHERE user_id=? AND request_id=?").get(userId,key);
         if(prior){
-          if(prior.name!==name||prior.opening_minor!==opening)
+          if(prior.name!==name||BigInt(prior.opening_minor)!==opening)
             throw new StoreError(409,"Request ID already used for different input");
           return {id:prior.id,name,openingMinor:String(opening),alreadyApplied:true};
         }
         const id=randomUUID();
         db.prepare("INSERT INTO accounts(id,user_id,name,kind,opening_minor,request_id,created_at) VALUES(?,?,?,'asset',?,?,?)")
           .run(id,userId,name,opening,key,new Date().toISOString());
-        if(opening>0){
+        if(opening>0n){
           journal(userId,"open:"+key,"opening",null,id,opening,[
             {accountId:id,signedMinor:opening},{accountId:internal(userId,"opening"),signedMinor:-opening}
           ]);
@@ -179,8 +182,8 @@ export function openStore(filename){
       });
     },
     listAccounts(userId){
-      const rows=db.prepare("SELECT a.id,a.name,a.opening_minor,COALESCE(SUM(p.signed_minor),0) AS balance FROM accounts a LEFT JOIN postings p ON p.account_id=a.id WHERE a.user_id=? AND a.kind='asset' GROUP BY a.id ORDER BY a.created_at,a.id").all(userId);
-      return rows.map(row=>({id:row.id,name:row.name,openingMinor:String(row.opening_minor),balanceMinor:String(row.balance)}));
+      const rows=db.prepare("SELECT a.id,a.name,CAST(a.opening_minor AS TEXT) AS opening_minor,CAST(COALESCE(SUM(p.signed_minor),0) AS TEXT) AS balance FROM accounts a LEFT JOIN postings p ON p.account_id=a.id WHERE a.user_id=? AND a.kind='asset' GROUP BY a.id ORDER BY a.created_at,a.id").all(userId);
+      return rows.map(row=>({id:row.id,name:row.name,openingMinor:row.opening_minor,balanceMinor:row.balance}));
     },
     createTransaction(userId,{kind,fromAccountId=null,toAccountId=null,amountMinor:rawAmount,requestId:key}){
       requestId(key);
@@ -190,7 +193,7 @@ export function openStore(filename){
         const prior=db.prepare("SELECT id,request_id,kind,from_account_id,to_account_id,amount_minor FROM journals WHERE user_id=? AND request_id=?").get(userId,key);
         if(prior){
           if(prior.kind!==kind||prior.from_account_id!==fromAccountId||
-            prior.to_account_id!==toAccountId||prior.amount_minor!==amount)
+            prior.to_account_id!==toAccountId||BigInt(prior.amount_minor)!==amount)
             throw new StoreError(409,"Request ID already used for different input");
           return {...viewJournal(prior),alreadyApplied:true};
         }
@@ -198,6 +201,7 @@ export function openStore(filename){
         if(kind==="income"){
           const to=asset(userId,toAccountId);
           if(fromAccountId!==null)throw new StoreError(400,"Income source must be empty");
+          if(balanceOf(to)+amount>MAX_ASSET_BALANCE)throw new StoreError(422,"Account balance limit exceeded");
           postings=[{accountId:to,signedMinor:amount},{accountId:internal(userId,"income"),signedMinor:-amount}];
         }else if(kind==="expense"){
           const from=asset(userId,fromAccountId);
@@ -208,6 +212,7 @@ export function openStore(filename){
           const from=asset(userId,fromAccountId),to=asset(userId,toAccountId);
           if(from===to)throw new StoreError(400,"Transfer requires different accounts");
           if(balanceOf(from)<amount)throw new StoreError(409,"Insufficient balance");
+          if(balanceOf(to)+amount>MAX_ASSET_BALANCE)throw new StoreError(422,"Account balance limit exceeded");
           postings=[{accountId:from,signedMinor:-amount},{accountId:to,signedMinor:amount}];
         }
         return {...journal(userId,key,kind,fromAccountId,toAccountId,amount,postings),alreadyApplied:false};
