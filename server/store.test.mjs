@@ -122,3 +122,36 @@ test("full export contains all journals and postings, including >100 records, wi
     }
   }finally{db.close();}
 });
+
+
+test("cursor pagination visits all transactions exactly once and protects user boundaries",()=>{
+  const db=openStore(":memory:");
+  try{
+    const alice=db.register("page-a@example.com","test_password_for_page_alice_123");
+    const bob=db.register("page-b@example.com","test_password_for_page_bob_123");
+    const wallet=db.createAccount(alice.id,{name:"Cash",openingMinor:"1000",requestId:"page-alice-wallet"});
+    const bobWallet=db.createAccount(bob.id,{name:"Cash",openingMinor:"500",requestId:"page-bob-wallet"});
+    const bobTx=db.createTransaction(bob.id,{kind:"income",toAccountId:bobWallet.id,amountMinor:"1",requestId:"page-bob-income"});
+    for(let i=0;i<137;i++)db.createTransaction(alice.id,{
+      kind:"income",toAccountId:wallet.id,amountMinor:"1",requestId:`page-income-${String(i).padStart(4,"0")}`
+    });
+    assert.equal(db.listTransactions(alice.id).length,100,"legacy feed must remain compatible");
+    let cursor=null;
+    const seen=new Set();
+    const sizes=[];
+    do{
+      const page=db.listTransactionsPage(alice.id,{limit:25,cursor});
+      sizes.push(page.transactions.length);
+      assert.ok(page.transactions.every(tx=>typeof tx.amountMinor==="string"));
+      for(const tx of page.transactions){assert.ok(!seen.has(tx.id));seen.add(tx.id);}
+      cursor=page.nextCursor;
+    }while(cursor!==null);
+    assert.deepEqual(sizes,[25,25,25,25,25,12]);
+    assert.equal(seen.size,137);
+    assert.throws(()=>db.listTransactionsPage(alice.id,{cursor:bobTx.id}),e=>e.status===400);
+    assert.throws(()=>db.listTransactionsPage(alice.id,{cursor:"invalid"}),e=>e.status===400);
+    for(const limit of [0,-1,101,1.1,NaN,"25"])
+      assert.throws(()=>db.listTransactionsPage(alice.id,{limit}),e=>e.status===400);
+    assert.equal(db.listTransactionsPage(bob.id,{limit:50}).transactions.length,1);
+  }finally{db.close();}
+});

@@ -56,6 +56,15 @@ test("local API authentication, authorization, CSRF and idempotency",async()=>{
     assert.equal((await request("/api/transactions",{method:"POST",cookie:a.cookie,body:expense})).status,200);
     assert.equal((await request("/api/accounts",{cookie:a.cookie})).data.accounts[0].balanceMinor,"10000");
     assert.equal((await request("/api/transactions",{cookie:a.cookie})).data.transactions.length,1);
+    const firstPage=await request("/api/transactions?limit=1",{cookie:a.cookie});
+    assert.equal(firstPage.status,200);
+    assert.equal(firstPage.data.transactions.length,1);
+    assert.equal(firstPage.data.nextCursor,null);
+    assert.equal((await request("/api/transactions?limit=0",{cookie:a.cookie})).status,400);
+    assert.equal((await request("/api/transactions?limit=101",{cookie:a.cookie})).status,400);
+    assert.equal((await request("/api/transactions?limit=2&limit=4",{cookie:a.cookie})).status,400);
+    assert.equal((await request("/api/transactions?cursor=bogus",{cookie:a.cookie})).status,400);
+    assert.equal((await request("/api/transactions?limit=10",{cookie:b.cookie})).data.transactions.length,0);
     const exportData=await request("/api/export",{cookie:a.cookie});
     assert.equal(exportData.status,200);
     assert.equal(exportData.data.accounts.length,1);

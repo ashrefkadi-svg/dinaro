@@ -222,6 +222,29 @@ export function openStore(filename){
       const rows=db.prepare("SELECT id,kind,request_id,from_account_id,to_account_id,CAST(amount_minor AS TEXT) AS amount_minor,created_at FROM journals WHERE user_id=? AND kind!='opening' ORDER BY created_at DESC,id DESC LIMIT 100").all(userId);
       return rows.map(row=>({...viewJournal(row),createdAt:row.created_at}));
     },
+    // Seek pagination for the complete user-visible transaction history.
+    // The legacy 100-row listTransactions feed remains unchanged.
+    listTransactionsPage(userId,{limit=50,cursor=null}={}){
+      if(!Number.isInteger(limit)||limit<1||limit>100)
+        throw new StoreError(400,"Transaction page limit must be 1-100");
+      let rows;
+      const fields="id,kind,request_id,from_account_id,to_account_id,CAST(amount_minor AS TEXT) AS amount_minor,created_at";
+      if(cursor!==null){
+        if(typeof cursor!=="string"||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cursor))
+          throw new StoreError(400,"Invalid transaction cursor");
+        // A cursor is valid only for a journal owned by this user.
+        const anchor=db.prepare("SELECT created_at FROM journals WHERE user_id=? AND id=? AND kind!='opening'").get(userId,cursor);
+        if(!anchor)throw new StoreError(400,"Invalid transaction cursor");
+        rows=db.prepare("SELECT "+fields+" FROM journals WHERE user_id=? AND kind!='opening' AND (created_at<? OR (created_at=? AND id<?)) ORDER BY created_at DESC,id DESC LIMIT ?")
+          .all(userId,anchor.created_at,anchor.created_at,cursor,limit+1);
+      }else{
+        rows=db.prepare("SELECT "+fields+" FROM journals WHERE user_id=? AND kind!='opening' ORDER BY created_at DESC,id DESC LIMIT ?")
+          .all(userId,limit+1);
+      }
+      const hasMore=rows.length>limit;
+      const transactions=rows.slice(0,limit).map(row=>({...viewJournal(row),createdAt:row.created_at}));
+      return {transactions,nextCursor:hasMore?transactions.at(-1).id:null};
+    },
     /**
      * Complete, read-only journal snapshot for this authenticated user.
      * Unlike listTransactions (a 100-row UI feed), this includes every
