@@ -128,6 +128,20 @@ export async function startLocalApi({dbPath,port=8787,host="127.0.0.1"}={}){
         const account=store.createAccount(user.id,body);
         send(res,account.alreadyApplied?200:201,{account});return;
       }
+      if(method==="GET"&&path==="/api/goals"){
+        send(res,200,{goals:store.listGoals(user.id)});return;
+      }
+      if(method==="POST"&&path==="/api/goals"){
+        const goal=store.createGoal(user.id,await parseBody(req));
+        send(res,goal.alreadyApplied?200:201,{goal});return;
+      }
+      if(method==="GET"&&path==="/api/budgets"){
+        send(res,200,{budgets:store.listBudgets(user.id)});return;
+      }
+      if(method==="POST"&&path==="/api/budgets"){
+        const budget=store.upsertBudget(user.id,await parseBody(req));
+        send(res,200,{budget});return;
+      }
       if(method==="GET"&&path==="/api/transactions"){
         const params=url.searchParams;
         if(params.has("limit")||params.has("cursor")){
@@ -150,8 +164,8 @@ export async function startLocalApi({dbPath,port=8787,host="127.0.0.1"}={}){
       if(method==="GET"&&path==="/api/export"){
         const ledger=store.exportLedger(user.id);
         send(res,200,{format:"dinaro-local-ledger-snapshot-v2",currency:"DZD",amountUnit:"centime",
-          user,accounts:store.listAccounts(user.id),ledger,
-          warning:"Complete local read-only journal snapshot. NOT a restorable database backup; retain the original SQLite database securely."});
+          user,accounts:store.listAccounts(user.id),goals:store.listGoals(user.id),budgets:store.listBudgets(user.id),ledger,
+          warning:"Complete local read-only journal and goal/budget metadata snapshot. NOT a restorable database backup; retain the original SQLite database securely."});
         return;
       }
       throw new StoreError(404,"Endpoint not found");
