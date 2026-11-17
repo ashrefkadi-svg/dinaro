@@ -1,9 +1,10 @@
 import {test} from "node:test";
 import assert from "node:assert/strict";
-import {mkdtempSync,rmSync} from "node:fs";
+import {mkdtempSync,rmSync,readdirSync} from "node:fs";
 import {tmpdir} from "node:os";
 import {join} from "node:path";
 import {openStore,StoreError} from "./store.mjs";
+import {DatabaseSync} from "node:sqlite";
 
 test("SQLite persists exact balances, atomic transfers and isolated users",()=>{
   const dir=mkdtempSync(join(tmpdir(),"dinaro-store-"));
@@ -184,5 +185,35 @@ test("registered account, goals, budgets and exact balances persist after SQLite
     assert.equal(db.listGoals(user.id)[0].savedMinor,"0");
     assert.equal(db.listAccounts(user.id).reduce((s,a)=>s+BigInt(a.balanceMinor),0n),150000n);
     db.close();
+  }finally{rmSync(dir,{recursive:true,force:true});}
+});
+
+
+test("schema v1 upgrades to v2 without losing the existing user or journal",()=>{
+  const dir=mkdtempSync(join(tmpdir(),"dinaro-upgrade-"));
+  const file=join(dir,"legacy.sqlite");
+  try{
+    let store=openStore(file);
+    const user=store.register("legacy@example.com","legacy_password_for_upgrade_123");
+    const wallet=store.createAccount(user.id,{name:"Legacy wallet",openingMinor:"125050",requestId:"legacy-wallet-id"});
+    store.createTransaction(user.id,{kind:"expense",fromAccountId:wallet.id,amountMinor:"50",requestId:"legacy-expense-id"});
+    store.close();
+    // Reconstruct the schema-v1 condition in a disposable fixture only.
+    // Existing ledger tables and their records are left intact.
+    const raw=new DatabaseSync(file);
+    raw.exec("DROP TABLE budgets; DROP TABLE goals; PRAGMA user_version=1");
+    raw.close();
+    store=openStore(file);
+    assert.equal(readdirSync(dir).filter(n=>n.endsWith(".backup")).length,1,"existing v1 database was backed up");
+    assert.equal(store.login("legacy@example.com","legacy_password_for_upgrade_123").id,user.id);
+    assert.equal(store.listAccounts(user.id)[0].balanceMinor,"125000");
+    assert.equal(store.listTransactions(user.id).length,1);
+    assert.equal(store.listGoals(user.id).length,0);
+    store.createGoal(user.id,{name:"New goal",targetMinor:"20000",requestId:"legacy-new-goal"});
+    assert.equal(store.listGoals(user.id).length,1);
+    store.close();
+    const verify=new DatabaseSync(file);
+    assert.equal(Number(verify.prepare("PRAGMA user_version").get().user_version),2);
+    verify.close();
   }finally{rmSync(dir,{recursive:true,force:true});}
 });

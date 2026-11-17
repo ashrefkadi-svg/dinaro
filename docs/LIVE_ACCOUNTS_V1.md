@@ -4,7 +4,7 @@
 
 The default React entrypoint renders `src/RealBankingApp.tsx`, not the stand-alone Banking Signature demo. Users can register an email/password, sign in, and keep an HttpOnly session cookie. Every wallet, ledger entry, financial goal and budget limit displayed by this new UI is read from the authenticated SQLite database.
 
-- `server/store.mjs` schema version 2 adds `goals` and `budgets` **without deleting or changing existing tables**. The migration is transactional and can reopen an existing v1 database.
+- `server/store.mjs` schema version 2 adds `goals` and `budgets` **without deleting or changing existing tables**. The migration is transactional and can reopen an existing v1 database. Before upgrading an on-disk v1 database the server checkpoints the WAL and writes a timestamped `.backup` file; it aborts instead if that backup fails. These backup files contain sensitive account data and must be stored securely.
 - Goal savings are **asset accounts**: creating a goal creates a linked asset account; saving and withdrawing are ordinary balanced journal transfers with server-side ownership, idempotency and no-overdraft checks.
 - `GET/POST /api/goals`, `GET/POST /api/budgets`, registered/login/logout, accounts and cursor-paginated transaction history support the actual dashboard.
 - Export includes full user-owned ledger, goal metadata and budget limits in JSON, and is explicitly **not a restore-ready backup**.
@@ -27,7 +27,7 @@ npm run dev
 
 Open `http://localhost:5173` on the same PC. Choose **Create account**; then create a wallet, add a manual opening balance, create a goal and transfer a contribution. Refresh or restart the server: records stay in `.local-data/dinaro.sqlite` and your session remains valid until logout/expiry. This folder is gitignored and should not be shared.
 
-Before updating an existing local database, **stop the server**, back up the entire `.local-data` directory to a secure location, then start the updated server. Database schema upgrades are additive, but rollback of a schema upgrade requires restoring that offline backup.
+Before updating an existing local database, **stop the server**, back up the entire `.local-data` directory to a secure location, then start the updated server. The v2 migration also makes a timestamped `.backup` beside the SQLite database. Database schema upgrades are additive, but rollback of a schema upgrade requires restoring an offline backup securely (and ensuring that WAL/SHM files are handled as part of a cold restore).
 
 ## Tests
 

@@ -2,7 +2,7 @@
  * Local-only manual ledger store for DINARO+. No bank connectivity or production claims.
  * Node 22 --experimental-sqlite; schema v1; exact bounded integer DZD minor units.
  */
-import {mkdirSync} from "node:fs";
+import {mkdirSync,copyFileSync,chmodSync} from "node:fs";
 import {dirname} from "node:path";
 import {randomBytes, randomUUID, createHash, scryptSync, timingSafeEqual} from "node:crypto";
 import {DatabaseSync} from "node:sqlite";
@@ -80,6 +80,16 @@ export function openStore(filename){
   // Schema v2 is additive and transactional: existing users, journals and balances survive.
   // For non-demo data, copy the SQLite file (including WAL checkpoint) before upgrading.
   if(version<=1){
+    // Migration safety: create a restorable, offline copy before changing an
+    // existing on-disk v1 database. A checkpoint first includes WAL records.
+    // Fail closed if a checkpoint/backup cannot complete.
+    if(version===1&&filename!==":memory:"){
+      const checkpoint=db.prepare("PRAGMA wal_checkpoint(TRUNCATE)").get();
+      if(checkpoint.busy!==0){db.close();throw new Error("Database is busy; cannot back up before migration");}
+      const backupPath=filename+".pre-v2-"+new Date().toISOString().replace(/[:.]/g,"-")+".backup";
+      try{copyFileSync(filename,backupPath);chmodSync(backupPath,0o600);}
+      catch(e){db.close();throw new Error("Database backup failed; migration aborted",{cause:e});}
+    }
     db.exec("BEGIN IMMEDIATE");
     try{
       db.exec("CREATE TABLE goals (id TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, account_id TEXT NOT NULL UNIQUE REFERENCES accounts(id), name TEXT NOT NULL, target_minor INTEGER NOT NULL CHECK(target_minor>0), request_id TEXT NOT NULL, created_at TEXT NOT NULL, UNIQUE(user_id,request_id))");
