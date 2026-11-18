@@ -12,18 +12,22 @@ The default React entrypoint renders `src/RealBankingApp.tsx`, not the stand-alo
 
 ## Requirements and Windows PowerShell
 
-Install Node.js 22.x. From the extracted `DINARO-PLUS` folder, in **two separate PowerShell windows**:
+Install Node.js 22.x. From the extracted `DINARO-PLUS` folder, in **two separate PowerShell windows**. On Windows PowerShell, explicitly use `npm.cmd` instead of `npm`: PowerShell may block `C:\\Program Files\\nodejs\\npm.ps1` under the machine's script execution policy. Calling the `.cmd` executable works without relaxing that policy, without administrator access, and without changing system security settings.
+
+First PowerShell window (leave it running):
 
 ```powershell
-npm install --no-audit --no-fund
-npm run dev:api
+npm.cmd install --no-audit --no-fund
+npm.cmd run dev:api
 ```
 
-and:
+Second PowerShell window, from the **same project folder**:
 
 ```powershell
-npm run dev
+npm.cmd run dev
 ```
+
+`npm cmd install` (with a space) is **not** equivalent to `npm.cmd install` (with a dot). If `npm.cmd` is not recognized, verify Node.js installation and PATH with `node --version` and `where.exe npm`. If a command fails, keep its full error output for diagnosis. Avoid globally changing the PowerShell execution policy just to install this app.
 
 Open `http://localhost:5173` on the same PC. Choose **Create account**; then create a wallet, add a manual opening balance, create a goal and transfer a contribution. Refresh or restart the server: records stay in `.local-data/dinaro.sqlite` and your session remains valid until logout/expiry. This folder is gitignored and should not be shared.
 
@@ -32,9 +36,9 @@ Before updating an existing local database, **stop the server**, back up the ent
 ## Tests
 
 ```powershell
-npm run test:api
-npm run test
-npm run build
+npm.cmd run test:api
+npm.cmd run test
+npm.cmd run build
 ```
 
 Use `npm install` (no lockfile in this archive), then keep a generated `package-lock.json` for reproducible builds before deployment. Production deployment has **not** been configured or verified.
