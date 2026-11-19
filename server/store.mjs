@@ -318,14 +318,20 @@ export function openStore(filename){
       const postings=db.prepare("SELECT p.journal_id,p.account_id,CAST(p.signed_minor AS TEXT) AS signed_minor FROM postings p JOIN journals j ON j.id=p.journal_id WHERE j.user_id=? ORDER BY j.created_at,j.id,p.account_id").all(userId)
         .map(row=>({journalId:row.journal_id,accountId:row.account_id,signedMinor:row.signed_minor}));
       const owned=new Set(accounts.map(a=>a.id));
-      const byJournal=new Map(journals.map(j=>[j.id,{count:0,sum:0n}]));
+      // Every journal must have exactly two opposite postings of its declared
+      // amount. A zero-sum pair alone is insufficient: both legs could be
+      // corrupted to the same incorrect magnitude while remaining balanced.
+      const byJournal=new Map(journals.map(j=>[j.id,{count:0,sum:0n,amount:BigInt(j.amountMinor)}]));
       for(const p of postings){
         const j=byJournal.get(p.journalId);
         if(!j||!owned.has(p.accountId))throw new StoreError(500,"Ledger ownership invariant violated");
-        j.count++;j.sum+=BigInt(p.signedMinor);
+        const signed=BigInt(p.signedMinor);
+        if(signed===0n||(signed<0n?-signed:signed)!==j.amount)
+          throw new StoreError(500,"Journal amount does not match its postings");
+        j.count++;j.sum+=signed;
       }
       for(const j of byJournal.values()){
-        if(j.count<2||j.sum!==0n)throw new StoreError(500,"Unbalanced journal detected during export");
+        if(j.count!==2||j.sum!==0n)throw new StoreError(500,"Unbalanced journal detected during export");
       }
       return {accounts,journals,postings,counts:{accounts:accounts.length,journals:journals.length,postings:postings.length}};
     }
