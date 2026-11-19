@@ -217,3 +217,26 @@ test("schema v1 upgrades to v2 without losing the existing user or journal",()=>
     verify.close();
   }finally{rmSync(dir,{recursive:true,force:true});}
 });
+
+test("export rejects balanced postings that disagree with the journal amount",()=>{
+  const dir=mkdtempSync(join(tmpdir(),"dinaro-export-integrity-"));
+  const file=join(dir,"audit.sqlite");
+  try{
+    const store=openStore(file);
+    const user=store.register("integrity@example.com","test_password_for_integrity_123");
+    const wallet=store.createAccount(user.id,{name:"Wallet",openingMinor:"100",requestId:"integrity-wallet"});
+    const snapshot=store.exportLedger(user.id);
+    assert.equal(snapshot.counts.journals,1);
+    const journalId=snapshot.journals[0].id;
+    store.close();
+    const raw=new DatabaseSync(file);
+    // Simulate a corrupt database with a balanced but incorrect +200/-200 pair.
+    raw.prepare("UPDATE postings SET signed_minor=signed_minor*2 WHERE journal_id=?").run(journalId);
+    raw.close();
+    const reopened=openStore(file);
+    try{
+      assert.throws(()=>reopened.exportLedger(user.id),e=>e.status===500&&/amount/.test(e.message));
+      assert.equal(reopened.listAccounts(user.id)[0].balanceMinor,"200");
+    }finally{reopened.close();}
+  }finally{rmSync(dir,{recursive:true,force:true});}
+});
