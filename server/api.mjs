@@ -34,7 +34,9 @@ function send(res,status,data,headers={}){
   res.end(JSON.stringify(data));
 }
 async function parseBody(req){
-  if(!String(req.headers["content-type"]??"").toLowerCase().startsWith("application/json"))
+  // Accept only the JSON media type, optionally with UTF-8 charset; reject lookalikes.
+  const contentType=String(req.headers["content-type"]??"").trim();
+  if(!/^application\/json(?:\s*;\s*charset\s*=\s*"?utf-8"?)?\s*$/i.test(contentType))
     throw new StoreError(415,"application/json required");
   let size=0;
   const buffers=[];
