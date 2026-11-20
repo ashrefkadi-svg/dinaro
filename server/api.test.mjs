@@ -25,6 +25,19 @@ test("local API authentication, authorization, CSRF and idempotency",async()=>{
     assert.equal((await request("/api/accounts")).status,401);
     assert.equal((await request("/api/auth/register",{method:"POST",csrf:false,body:{}})).status,403);
     assert.equal((await request("/api/auth/register",{method:"POST",origin:"https://attacker.example",body:{}})).status,403);
+    // Strict JSON media type: a prefix match would accept invalid lookalike types.
+    for(const contentType of ["application/json-patch+json","application/json-malicious","text/plain","application/json; charset=iso-8859-1"]){
+      const response=await fetch(url+"/api/auth/register",{
+        method:"POST",headers:{"content-type":contentType,"x-dinaro-request":"1"},
+        body:JSON.stringify({email:"bad-type@example.com",password:"long_test_password_123"})
+      });
+      assert.equal(response.status,415,contentType);
+    }
+    const utf8=await fetch(url+"/api/auth/register",{
+      method:"POST",headers:{"content-type":"application/json; charset=UTF-8","x-dinaro-request":"1"},
+      body:JSON.stringify({email:"utf8-type@example.com",password:"long_test_password_123"})
+    });
+    assert.equal(utf8.status,201,"UTF-8 JSON must remain supported");
 
     const a=await request("/api/auth/register",{method:"POST",body:{
       email:"a@example.com",password:"password_is_long_enough_123"
