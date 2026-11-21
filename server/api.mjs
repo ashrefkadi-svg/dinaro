@@ -69,7 +69,13 @@ export async function startLocalApi({dbPath,port=8787,host="127.0.0.1"}={}){
 
   function throttle(req,key){
     const now=Date.now(),tag=(req.socket.remoteAddress??"unknown")+":"+key;
-    if(failures.size>512)failures.clear();
+    // Never reset active lockouts just because the tracking map grew.
+    // Prune only expired entries; keep live per-client throttles intact.
+    if(failures.size>512){
+      for(const [entry,record] of failures){
+        if(record.until<=now)failures.delete(entry);
+      }
+    }
     const value=failures.get(tag);
     if(value && value.until>now && value.count>=12)throw new StoreError(429,"Too many authentication attempts");
     if(!value||value.until<=now)failures.set(tag,{count:1,until:now+5*60*1000});
