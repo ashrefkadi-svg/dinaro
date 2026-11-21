@@ -122,3 +122,32 @@ test("real registration, goal and budget API persist per user",async()=>{
     assert.equal(accounts.body.accounts.reduce((s,a)=>s+BigInt(a.balanceMinor),0n),75000n);
   }finally{await app.close();rmSync(dir,{recursive:true,force:true});}
 });
+
+test("authentication attempts are rate limited without granting a session",async()=>{
+  const dir=mkdtempSync(join(tmpdir(),"dinaro-auth-throttle-"));
+  const app=await startLocalApi({dbPath:join(dir,"data.sqlite"),port:0});
+  const url="http://127.0.0.1:"+app.port;
+  try{
+    const register=await fetch(url+"/api/auth/register",{
+      method:"POST",
+      headers:{"content-type":"application/json","x-dinaro-request":"1"},
+      body:JSON.stringify({email:"throttle@example.com",password:"long-enough-password-123"})
+    });
+    assert.equal(register.status,201);
+    for(let attempt=0;attempt<12;attempt++){
+      const result=await fetch(url+"/api/auth/login",{
+        method:"POST",
+        headers:{"content-type":"application/json","x-dinaro-request":"1"},
+        body:JSON.stringify({email:"throttle@example.com",password:"incorrect-password-123"})
+      });
+      assert.equal(result.status,401);
+    }
+    const blocked=await fetch(url+"/api/auth/login",{
+      method:"POST",
+      headers:{"content-type":"application/json","x-dinaro-request":"1"},
+      body:JSON.stringify({email:"throttle@example.com",password:"long-enough-password-123"})
+    });
+    assert.equal(blocked.status,429);
+    assert.equal(blocked.headers.get("set-cookie"),null);
+  }finally{await app.close();rmSync(dir,{recursive:true,force:true});}
+});
